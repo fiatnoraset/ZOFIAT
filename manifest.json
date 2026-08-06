@@ -1,0 +1,30 @@
+{
+  "name": "One Stop Service - Super App 9-in-1",
+  "short_name": "One Stop",
+  "description": "ศูนย์รวมบริการอำนวยความสะดวกครบวงจร 9-in-1 สำหรับทุกการใช้ชีวิต",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

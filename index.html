@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One Stop Service - ศูนย์รวมบริการอำนวยความสะดวกครบวงจร 9-in-1</title>
+  
+  <!-- PWA Manifest & Meta Tags -->
+  <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="One Stop">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & Babel CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            darkBg: '#0b0f19',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f9fafb;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.10) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .glass-card {
+      background: rgba(31, 41, 55, 0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .text-gradient-purple {
+      background: linear-gradient(135deg, #c084fc 0%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: flex;
+      width: 200%;
+      animation: marquee 22s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.85; }
+    }
+    .pulse-sos {
+      animation: pulseGlow 1.8s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+          .then((reg) => {
+            console.log('[PWA] Service Worker registered successfully, scope:', reg.scope);
+            if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          })
+          .catch((err) => {
+            console.warn('[PWA] service-worker.js registration failed, trying sw.js fallback:', err);
+            navigator.serviceWorker.register('/sw.js', { scope: '/' });
+          });
+      });
+    }
+  </script>
+</head>
+<body class="min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('dashboard');
+      const [cart, setCart] = useState([{ id: 101, name: 'ข้าวมันไก่ต้มหนังนุ่ม', price: 65, quantity: 1 }]);
+      const [activeRide, setActiveRide] = useState(false);
+      const [sosAlertActive, setSosAlertActive] = useState(false);
+      const [watchlist, setWatchlist] = useState(['PTT', 'CPALL', 'ADVANC']);
+      const [notifications, setNotifications] = useState([
+        { id: 1, title: 'บิลค่าน้ำประปาครบกำหนดชำระ', detail: 'ยอดชำระ 340.00 บาท', time: '10 นาทีที่แล้ว' },
+        { id: 2, title: 'พนักงานส่งอาหารกำลังจัดส่ง', detail: 'ร้านข้าวมันไก่เฮียเม้ง กำลังเดินทาง', time: '25 นาทีที่แล้ว' }
+      ]);
+      const [showNotif, setShowNotif] = useState(false);
+      const [deferredPrompt, setDeferredPrompt] = useState(null);
+      const [showInstallModal, setShowInstallModal] = useState(false);
+      // Dynamically detect URL so it works on localhost, LAN IP, and public tunnel (serveo, etc.)
+      const localNetworkUrl = window.location.origin;
+
+      // Listen for PWA Install Prompt
+      useEffect(() => {
+        const handleBeforeInstallPrompt = (e) => {
+          e.preventDefault();
+          setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      }, []);
+
+      const handleInstallPWA = () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('User accepted PWA installation');
+            }
+            setDeferredPrompt(null);
+          });
+        } else {
+          setShowInstallModal(true);
+        }
+      };
+
+      // Smart Home Devices
+      const [smartDevices, setSmartDevices] = useState([
+        { id: 1, name: 'ไฟดาวน์ไลท์หลัก', room: 'Living Room', on: true, wattage: 18 },
+        { id: 2, name: 'เครื่องปรับอากาศ Inverter', room: 'Living Room', on: true, wattage: 1200 },
+        { id: 3, name: 'Smart TV 65 นิ้ว', room: 'Living Room', on: false, wattage: 150 },
+        { id: 4, name: 'ไฟหัวเตียงนอน', room: 'Bedroom', on: false, wattage: 12 },
+        { id: 5, name: 'ประตูรั้วอัตโนมัติ', room: 'Garage', on: true, wattage: 45 },
+      ]);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [activeTab, cart, smartDevices, activeRide, sosAlertActive, showInstallModal]);
+
+      const addToCart = (item) => {
+        setCart(prev => {
+          const found = prev.find(i => i.id === item.id);
+          if (found) return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+          return [...prev, { ...item, quantity: 1 }];
+        });
+      };
+
+      const removeFromCart = (id) => {
+        setCart(prev => prev.map(i => i.id === id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+      };
+
+      const toggleDevice = (id) => {
+        setSmartDevices(prev => prev.map(d => d.id === id ? { ...d, on: !d.on } : d));
+      };
+
+      const toggleWatchlist = (symbol) => {
+        setWatchlist(prev => prev.includes(symbol) ? prev.filter(s => s !== symbol) : [...prev, symbol]);
+      };
+
+      const totalCartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+
+      return (
+        <div className="min-h-screen flex flex-col justify-between">
+          
+          {/* Header Bar */}
+          <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10 px-4 lg:px-8 py-3 mb-6">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+              
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+                <img src="logo.jpg" alt="One Stop Service Logo" className="w-10 h-10 rounded-xl object-cover border border-emerald-400/40 shadow-lg hover:scale-105 transition-transform" />
+                <div>
+                  <h1 className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-teal-200 to-emerald-400 bg-clip-text text-transparent">
+                    One Stop Service <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">PWA 9-in-1</span>
+                  </h1>
+                  <p className="text-xs text-gray-400 flex items-center gap-1">
+                    <i data-lucide="map-pin" className="w-3 h-3 text-emerald-400"></i> กรุงเทพมหานคร, ไทย
+                  </p>
+                </div>
+              </div>
+
+              {/* Header Right Actions */}
+              <div className="flex items-center gap-2 sm:gap-3">
+
+                {/* Install PWA Button */}
+                <button 
+                  onClick={handleInstallPWA}
+                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 transition-transform"
+                  title="ติดตั้งเป็นแอปมือถือ / PWA"
+                >
+                  <i data-lucide="download" className="w-4 h-4"></i>
+                  <span className="hidden sm:inline">ติดตั้งแอป PWA</span>
+                </button>
+
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowNotif(!showNotif)}
+                    className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 relative"
+                  >
+                    <i data-lucide="bell" className="w-5 h-5"></i>
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
+                        {notifications.length}
+                      </span>
+                    )}
+                  </button>
+
+                  {showNotif && (
+                    <div className="absolute right-0 mt-2 w-80 glass-panel p-4 rounded-2xl shadow-2xl z-50 border border-white/20">
+                      <h4 className="font-bold text-xs text-white mb-2 pb-2 border-b border-white/10">การแจ้งเตือนล่าสุด</h4>
+                      <div className="space-y-2">
+                        {notifications.map(n => (
+                          <div key={n.id} className="p-2.5 rounded-xl bg-white/5 text-xs">
+                            <p className="font-bold text-white">{n.title}</p>
+                            <p className="text-gray-300 text-[11px]">{n.detail}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <button 
+                  onClick={() => setActiveTab('food')}
+                  className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-orange-400 relative"
+                >
+                  <i data-lucide="shopping-bag" className="w-5 h-5"></i>
+                  {totalCartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center">
+                      {totalCartCount}
+                    </span>
+                  )}
+                </button>
+
+                <div className="flex items-center gap-2 pl-2 border-l border-white/10">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow-md border border-white/20">
+                    <i data-lucide="user" className="w-5 h-5"></i>
+                  </div>
+                  <span className="hidden sm:inline text-xs font-bold text-white">คุณนรเศรษฐ์</span>
+                </div>
+              </div>
+
+            </div>
+          </header>
+
+          {/* Navigation Bar */}
+          <nav className="max-w-7xl mx-auto px-4 lg:px-8 w-full mb-6">
+            <div className="glass-panel p-2 rounded-2xl flex items-center gap-2 overflow-x-auto">
+              {[
+                { id: 'dashboard', label: 'หน้าหลัก', icon: 'layout-dashboard', color: 'text-indigo-400' },
+                { id: 'ride', label: 'เรียกรถ', icon: 'car', color: 'text-cyan-400' },
+                { id: 'food', label: 'สั่งอาหาร', icon: 'utensils-crossed', color: 'text-orange-400' },
+                { id: 'mall', label: 'เครื่องใช้ไฟฟ้า', icon: 'tv', color: 'text-purple-400' },
+                { id: 'bill', label: 'จ่ายบิล', icon: 'credit-card', color: 'text-emerald-400' },
+                { id: 'sos', label: 'เหตุด่วน SOS', icon: 'alert-triangle', color: 'text-rose-500', hot: true },
+                { id: 'home', label: 'ควบคุมบ้าน', icon: 'home', color: 'text-pink-400' },
+                { id: 'ai', label: 'ผู้ช่วย AI', icon: 'bot', color: 'text-violet-400', badge: 'AI' },
+                { id: 'stocks', label: 'ตลาดหุ้น', icon: 'trending-up', color: 'text-teal-400' },
+                { id: 'news', label: 'ข่าวสารบ้านเมือง', icon: 'newspaper', color: 'text-blue-400' },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition ${
+                    activeTab === item.id ? 'bg-white/15 text-white font-bold border border-white/20' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <i data-lucide={item.icon} className={`w-4 h-4 ${item.color}`}></i>
+                  <span>{item.label}</span>
+                  {item.hot && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold">HOT</span>}
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          {/* Main Content Modules Container */}
+          <main className="max-w-7xl mx-auto px-4 lg:px-8 w-full">
+            {activeTab === 'dashboard' && (
+              <DashboardView 
+                setActiveTab={setActiveTab} 
+                smartDevices={smartDevices}
+                toggleDevice={toggleDevice}
+                triggerSos={() => { setSosAlertActive(true); setActiveTab('sos'); }}
+                handleInstallPWA={handleInstallPWA}
+                localNetworkUrl={localNetworkUrl}
+              />
+            )}
+
+            {activeTab === 'ride' && (
+              <RideView activeRide={activeRide} setActiveRide={setActiveRide} />
+            )}
+
+            {activeTab === 'food' && (
+              <FoodView cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} clearCart={() => setCart([])} />
+            )}
+
+            {activeTab === 'mall' && (
+              <MallView addToCart={addToCart} />
+            )}
+
+            {activeTab === 'bill' && (
+              <BillView />
+            )}
+
+            {activeTab === 'sos' && (
+              <SosView sosAlertActive={sosAlertActive} triggerSos={() => setSosAlertActive(true)} cancelSos={() => setSosAlertActive(false)} />
+            )}
+
+            {activeTab === 'home' && (
+              <HomeView devices={smartDevices} toggleDevice={toggleDevice} />
+            )}
+
+            {activeTab === 'ai' && (
+              <AiView setActiveTab={setActiveTab} />
+            )}
+
+            {activeTab === 'stocks' && (
+              <StocksView watchlist={watchlist} toggleWatchlist={toggleWatchlist} />
+            )}
+
+            {activeTab === 'news' && (
+              <NewsView />
+            )}
+          </main>
+
+          {/* PWA Multi-Device Install & QR Modal */}
+          {showInstallModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+              <div className="glass-panel w-full max-w-md p-6 rounded-3xl space-y-4 relative border border-emerald-500/40 text-center">
+                <button onClick={() => setShowInstallModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+
+                <div className="w-16 h-16 rounded-2xl mx-auto overflow-hidden border-2 border-emerald-400 shadow-lg mb-2">
+                  <img src="logo.jpg" alt="Logo" className="w-full h-full object-cover" />
+                </div>
+
+                <h3 className="font-extrabold text-lg text-white">เปิดใช้งานได้บนทุกอุปกรณ์ (PWA)</h3>
+                <p className="text-xs text-gray-300">เข้าใช้งานได้ทั้งมือถือ iOS / Android, แท็บเล็ต และคอมพิวเตอร์</p>
+
+                <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 text-left space-y-2">
+                  <p className="text-xs font-bold text-emerald-400">📱 ลิงก์สำหรับเปิดบนมือถือ/อุปกรณ์อื่น:</p>
+                  <div className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-white break-all flex items-center justify-between">
+                    <span>{localNetworkUrl}</span>
+                    <button 
+                      onClick={() => { navigator.clipboard.writeText(localNetworkUrl); alert('คัดลอกลิงก์สำเร็จ!'); }}
+                      className="px-2 py-1 rounded bg-emerald-600 text-[10px] font-bold shrink-0"
+                    >
+                      คัดลอก
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    *เพียงเชื่อมต่อ Wi-Fi เดียวกัน หรือพิมพ์ URL นี้ในมือถือเครื่องใดก็ได้
+                  </p>
+                </div>
+
+                <div className="space-y-1 text-xs text-gray-300 text-left pt-2 border-t border-white/10">
+                  <p className="font-bold text-white mb-1">📲 วิธีติดตั้งเป็นแอป (Add to Home Screen):</p>
+                  <p>• <b>iOS (Safari):</b> กดปุ่มแชร์ ➔ เลือก "เพิ่มไปยังหน้าจอโฮม" (Add to Home Screen)</p>
+                  <p>• <b>Android (Chrome):</b> กดจุด 3 จุด ➔ เลือก "ติดตั้งแอป" (Install App)</p>
+                </div>
+
+                <button onClick={() => setShowInstallModal(false)} className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs mt-2">
+                  ตกลง / เข้าใช้งาน
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <footer className="mt-16 border-t border-white/10 glass-panel py-6 px-4 text-center text-xs text-gray-400">
+            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p>© 2026 One Stop Service - PWA Progressive Web App 9-in-1</p>
+              <div className="flex items-center gap-3">
+                <span className="text-emerald-400 font-semibold">● PWA Ready (รองรับทุกอุปกรณ์)</span>
+              </div>
+            </div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    /* Sub-Views */
+    function DashboardView({ setActiveTab, smartDevices, toggleDevice, triggerSos, handleInstallPWA, localNetworkUrl }) {
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-8 rounded-3xl bg-gradient-to-r from-emerald-950/80 via-teal-950/60 to-slate-900 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
+                <i data-lucide="sparkles" className="w-3.5 h-3.5"></i> ยินดีต้อนรับ คุณนรเศรษฐ์ (PWA Active)
+              </span>
+              <h2 className="text-2xl lg:text-3xl font-extrabold text-white">
+                One Stop Service <span className="text-gradient-purple">เปิดใช้งานได้ทุกอุปกรณ์ (9-in-1)</span>
+              </h2>
+              <p className="text-xs text-gray-300 mt-1 max-w-xl">
+                รองรับการติดตั้งเป็นแอปบนมือถือ iOS / Android และเปิดใช้งานได้ทุกอุปกรณ์ผ่าน Wi-Fi เดียวกันที่ <b className="text-emerald-300">{localNetworkUrl}</b>
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button onClick={handleInstallPWA} className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs shadow-lg flex items-center gap-2">
+                <i data-lucide="smartphone" className="w-4 h-4"></i> ติดตั้งลงมือถือ / เปิดทุกอุปกรณ์
+              </button>
+            </div>
+          </div>
+
+          {/* Quick News & Stock Banner */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div onClick={() => setActiveTab('news')} className="glass-panel p-3.5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-blue-500">
+              <span className="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-400 font-bold text-xs">ข่าวด่วน</span>
+              <p className="text-xs text-gray-200 truncate flex-1 px-3">แบงก์ชาติปรับประมาณการเศรษฐกิจไทยปี 2026 เติบโตแกร่งขึ้น</p>
+              <i data-lucide="arrow-right" className="w-4 h-4 text-gray-400"></i>
+            </div>
+
+            <div onClick={() => setActiveTab('stocks')} className="glass-panel p-3.5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-500">
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold text-xs">SET Index</span>
+              <p className="text-xs text-white font-bold flex-1 px-3">1,385.42 <span className="text-emerald-400 font-medium pl-2">+12.30 (+0.90%)</span></p>
+              <i data-lucide="arrow-right" className="w-4 h-4 text-gray-400"></i>
+            </div>
+          </div>
+
+          {/* 9 Grid Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+            {[
+              { id: 'ride', title: 'เรียกรถรับ-ส่ง', desc: 'แท็กซี่, มอเตอร์ไซค์, SUV VIP', icon: 'car', color: 'text-cyan-400', border: 'hover:border-cyan-500' },
+              { id: 'food', title: 'สั่งซื้ออาหาร', desc: 'ร้านเด็ด ส่งร้อนใน 20 นาที', icon: 'utensils-crossed', color: 'text-orange-400', border: 'hover:border-orange-500' },
+              { id: 'mall', title: 'สั่งเครื่องใช้ไฟฟ้า', desc: 'TV, ตู้เย็น, แอร์ ผ่อน 0%', icon: 'tv', color: 'text-purple-400', border: 'hover:border-purple-500' },
+              { id: 'bill', title: 'จ่ายบิลค่าน้ำ-ไฟ', desc: 'สแกน QR ฟรีค่าธรรมเนียม', icon: 'credit-card', color: 'text-emerald-400', border: 'hover:border-emerald-500' },
+              { id: 'sos', title: 'แจ้งเหตุด่วน SOS', desc: 'ปุ่มฉุกเฉิน โทร 191/1669', icon: 'alert-triangle', color: 'text-rose-500', border: 'border-rose-500/40 bg-rose-950/20' },
+              { id: 'home', title: 'สั่งเปิด-ปิดบ้าน', desc: 'ควบคุมสวิตช์ไฟ & แอร์ IoT', icon: 'home', color: 'text-pink-400', border: 'hover:border-pink-500' },
+              { id: 'ai', title: 'ผู้ช่วย AI ปรึกษา', desc: 'ไขข้อสงสัยบ้าน อาหาร สุขภาพ', icon: 'bot', color: 'text-violet-400', border: 'hover:border-violet-500' },
+              { id: 'stocks', title: 'ตลาดหุ้น SET', desc: 'ดูราคาหุ้น กราฟ Watchlist', icon: 'trending-up', color: 'text-teal-400', border: 'hover:border-teal-500' },
+              { id: 'news', title: 'ข่าวสารบ้านเมือง', icon: 'newspaper', desc: 'อัปเดตข่าวเศรษฐกิจ การเมือง', color: 'text-blue-400', border: 'hover:border-blue-500' },
+            ].map(card => (
+              <div 
+                key={card.id} 
+                onClick={() => setActiveTab(card.id)}
+                className={`glass-panel p-5 rounded-2xl cursor-pointer hover:scale-[1.02] transition border ${card.border}`}
+              >
+                <div className={`w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-3 ${card.color}`}>
+                  <i data-lucide={card.icon} className="w-6 h-6"></i>
+                </div>
+                <h4 className="font-bold text-sm text-white">{card.title}</h4>
+                <p className="text-xs text-gray-400 mt-1">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Widgets Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="glass-panel p-5 rounded-2xl space-y-3">
+              <h4 className="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="home" className="w-4 h-4 text-pink-400"></i> ทางด่วน Smart Home
+              </h4>
+              {smartDevices.slice(0, 3).map(dev => (
+                <div key={dev.id} className="glass-card p-3 rounded-xl flex items-center justify-between">
+                  <span className="text-xs text-white font-medium">{dev.name}</span>
+                  <button 
+                    onClick={() => toggleDevice(dev.id)}
+                    className={`w-10 h-6 rounded-full p-0.5 flex items-center ${dev.on ? 'bg-pink-500 justify-end' : 'bg-gray-700 justify-start'}`}
+                  >
+                    <span className="w-5 h-5 rounded-full bg-white"></span>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="glass-panel p-5 rounded-2xl space-y-3">
+              <h4 className="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="credit-card" className="w-4 h-4 text-emerald-400"></i> บิลรอชำระเดือนนี้
+              </h4>
+              <div className="glass-card p-3 rounded-xl flex justify-between text-xs">
+                <span>ค่าน้ำประปา (MWA)</span>
+                <span className="font-bold text-amber-400">340.00 ฿</span>
+              </div>
+              <div className="glass-card p-3 rounded-xl flex justify-between text-xs">
+                <span>ค่าไฟฟ้า (MEA)</span>
+                <span className="font-bold text-emerald-400">1,820.00 ฿</span>
+              </div>
+            </div>
+
+            <div className="glass-panel p-5 rounded-2xl border-rose-500/40 bg-rose-950/20 flex flex-col justify-between">
+              <div>
+                <h4 className="font-bold text-sm text-rose-400 flex items-center gap-2">
+                  <i data-lucide="alert-triangle" className="w-4 h-4"></i> ความปลอดภัย SOS
+                </h4>
+                <p className="text-xs text-gray-300 mt-1">กดแจ้งเหตุฉุกเฉินถึง 191 และผู้ติดต่อทันที</p>
+              </div>
+              <button onClick={triggerSos} className="mt-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs pulse-sos">
+                ส่งสัญญาณแจ้งเหตุฉุกเฉินด่วน
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function RideView({ activeRide, setActiveRide }) {
+      const [status, setStatus] = useState('idle');
+      const [pickup, setPickup] = useState('คอนโด แอสปาย พระราม 9');
+      const [dest, setDest] = useState('เซ็นทรัลเวิลด์ ราชประสงค์');
+
+      const handleBook = () => {
+        setStatus('searching');
+        setTimeout(() => {
+          setStatus('assigned');
+          setActiveRide(true);
+        }, 2000);
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-cyan-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="car" className="w-5 h-5 text-cyan-400"></i> บริการเรียกรถด่วน (One Stop Ride)
+            </h2>
+            <p className="text-xs text-gray-300 mt-1">ระบุจุดรับ-จุดส่ง เลือกรถที่ต้องการ มารับใน 5 นาที</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-5 glass-panel p-5 rounded-2xl space-y-4">
+              <h3 className="font-bold text-sm text-white">ระบุเส้นทางเดินทาง</h3>
+              <input type="text" value={pickup} onChange={e => setPickup(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดรับ..." />
+              <input type="text" value={dest} onChange={e => setDest(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดส่ง..." />
+
+              <h3 className="font-bold text-sm text-white pt-2">ประเภทรถ</h3>
+              <div className="space-y-2">
+                <div className="glass-card p-3 rounded-xl flex justify-between border-cyan-500 border">
+                  <div>
+                    <p className="text-xs font-bold text-white">Standard Car</p>
+                    <p className="text-[10px] text-gray-400">แอร์เย็น นั่งสบาย 4 ที่นั่ง</p>
+                  </div>
+                  <span className="font-extrabold text-cyan-400 text-sm">125 ฿</span>
+                </div>
+              </div>
+
+              {status === 'idle' && (
+                <button onClick={handleBook} className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg">
+                  ยืนยันเรียกรถทันที
+                </button>
+              )}
+            </div>
+
+            <div className="lg:col-span-7 glass-panel p-4 h-96 rounded-2xl relative overflow-hidden bg-slate-950 flex flex-col justify-between">
+              <div className="flex justify-between items-center bg-black/60 p-3 rounded-xl text-xs">
+                <span>📍 แผนที่ GPS สด</span>
+                <span className="text-cyan-400 font-bold">ระยะทาง 5.8 กม. (~14 นาที)</span>
+              </div>
+
+              {status === 'searching' && (
+                <div className="m-auto text-center p-4 glass-panel rounded-xl">
+                  <p className="font-bold text-sm text-cyan-300">กำลังค้นหาคนขับใกล้คุณ...</p>
+                </div>
+              )}
+
+              {status === 'assigned' && (
+                <div className="m-auto text-center p-4 glass-panel rounded-xl border-emerald-500">
+                  <p className="font-bold text-sm text-emerald-300">พบนายช่างคนขับแล้ว: คุณวิชัย (Toyota Camry 1กข 8892)</p>
+                  <p className="text-xs text-gray-300 mt-1">กำลังเดินทางมารับใน 4 นาที</p>
+                </div>
+              )}
+
+              <div className="flex justify-between text-[11px] text-gray-400">
+                <span>จุดรับ: {pickup}</span>
+                <span>จุดส่ง: {dest}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function FoodView({ cart, addToCart, removeFromCart, clearCart }) {
+      const restaurants = [
+        { id: 101, name: 'ข้าวมันไก่ต้มหนังนุ่ม + น้ำซุปฟัก', price: 65, resto: 'ข้าวมันไก่เฮียเม้ง' },
+        { id: 201, name: 'ทงคตสึราเมน ซุปกระดูกหมู', price: 180, resto: 'Ramen Ichiban' },
+        { id: 301, name: 'ส้มตำปูปลาร้าเครื่องแน่น', price: 60, resto: 'ส้มตำแซ่บเวอร์' },
+        { id: 401, name: 'Uji Matcha Latte เย็น', price: 120, resto: 'Cozy Matcha Cafe' }
+      ];
+
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-orange-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="utensils-crossed" className="w-5 h-5 text-orange-400"></i> สั่งอาหารดิลิเวอรีด่วน (One Stop Eats)
+            </h2>
+            <p className="text-xs text-gray-300 mt-1">ร้านดังรอบตัว จัดส่งร้อนถึงบ้านใน 20 นาที</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {restaurants.map(item => (
+                <div key={item.id} className="glass-panel p-4 rounded-2xl space-y-2">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-orange-500/20 text-orange-300">{item.resto}</span>
+                  <h4 className="font-bold text-sm text-white">{item.name}</h4>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="font-extrabold text-orange-400 text-sm">{item.price} ฿</span>
+                    <button onClick={() => addToCart(item)} className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs">
+                      + เพิ่มลงตะกร้า
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="lg:col-span-4 glass-panel p-5 rounded-2xl space-y-4">
+              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="shopping-bag" className="w-4 h-4 text-orange-400"></i> ตะกร้าของคุณ
+              </h3>
+              {cart.map(i => (
+                <div key={i.id} className="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
+                  <div>
+                    <p className="font-bold text-white">{i.name}</p>
+                    <p className="text-orange-400">{i.price} ฿</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => removeFromCart(i.id)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
+                    <span className="font-bold text-white">{i.quantity}</span>
+                    <button onClick={() => addToCart(i)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
+                  </div>
+                </div>
+              ))}
+              {cart.length > 0 && (
+                <button onClick={() => { alert('สั่งซื้อสำเร็จ! ไรเดอร์กำลังจัดส่ง'); clearCart(); }} className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs shadow-lg">
+                  ชำระเงินสั่งซื้อทันที
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function MallView({ addToCart }) {
+      const items = [
+        { id: 501, name: 'Samsung Neo QLED 4K Smart TV 65 นิ้ว', price: 28990, desc: 'ผ่อน 0% 10 เดือน' },
+        { id: 502, name: 'LG InstaView ตู้เย็น 4 ประตู (21.7 คิว)', price: 45900, desc: 'เคาะ 2 ครั้งมองเห็นข้างใน' },
+        { id: 503, name: 'Daikin Inverter Smart Aircon 18,000 BTU', price: 24500, desc: 'ฟรีติดตั้งทั่วประเทศ' },
+        { id: 504, name: 'Roborock S8 Pro Ultra หุ่นยนต์ดูดฝุ่น', price: 32900, desc: 'ซักผ้าถูอัตโนมัติ' },
+      ];
+
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-purple-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="tv" className="w-5 h-5 text-purple-400"></i> ห้างเครื่องใช้ไฟฟ้า Smart Home (One Stop Mall)
+            </h2>
+            <p className="text-xs text-gray-300 mt-1">สินค้าประกันศูนย์ไทย ผ่อน 0% ส่งพร้อมติดตั้งฟรี</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {items.map(prod => (
+              <div key={prod.id} className="glass-panel p-5 rounded-2xl flex flex-col justify-between space-y-3">
+                <div>
+                  <h4 className="font-bold text-sm text-white">{prod.name}</h4>
+                  <p className="text-[11px] text-purple-400 mt-1">{prod.desc}</p>
+                </div>
+                <div>
+                  <p className="font-extrabold text-white text-base mb-2">{prod.price.toLocaleString()} ฿</p>
+                  <button onClick={() => { addToCart(prod); alert('หยอดสินค้าใส่ตะกร้าเรียบร้อยแล้ว!'); }} className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs">
+                    สั่งซื้อทันที
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function BillView() {
+      const [paid, setPaid] = useState(false);
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-emerald-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="credit-card" className="w-5 h-5 text-emerald-400"></i> ศูนย์ชำระบิลออนไลน์ (One Stop Pay)
+            </h2>
+            <p className="text-xs text-gray-300 mt-1">ชำระบิลค่าน้ำ ค่าไฟ อินเทอร์เน็ต ไม่มีค่าธรรมเนียม</p>
+          </div>
+
+          <div className="glass-panel p-6 rounded-2xl max-w-lg mx-auto space-y-4">
+            <h3 className="font-bold text-sm text-white">บิลค่าไฟฟ้าประจำเดือน กรกฎาคม 2026</h3>
+            <div className="space-y-2 text-xs text-gray-300 border-t border-white/10 pt-3">
+              <div className="flex justify-between"><span>ผู้ใช้บริการ:</span><span className="text-white font-bold">คุณนรเศรษฐ์</span></div>
+              <div className="flex justify-between"><span>ปริมาณไฟฟ้า:</span><span>412 หน่วย (kWh)</span></div>
+              <div className="flex justify-between border-t border-white/10 pt-2 font-bold text-sm text-emerald-400"><span>ยอดเงินสุทธิ:</span><span>1,820.00 ฿</span></div>
+            </div>
+
+            {!paid ? (
+              <button onClick={() => setPaid(true)} className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs">
+                สแกน QR PromptPay ชำระเงิน (1,820.00 ฿)
+              </button>
+            ) : (
+              <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-center font-bold text-xs">
+                ✓ ชำระเงินเรียบร้อยแล้ว ออกใบเสร็จรับเงินสำเร็จ
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function SosView({ sosAlertActive, triggerSos, cancelSos }) {
+      return (
+        <div className="space-y-6 text-center">
+          <div className="glass-panel p-8 rounded-3xl border-rose-500/40 bg-rose-950/20 max-w-xl mx-auto space-y-6">
+            <h2 className="text-2xl font-extrabold text-rose-400">🚨 ศูนย์แจ้งเหตุฉุกเฉิน SOS</h2>
+            <p className="text-xs text-gray-300">กดปุ่มเพื่อส่งพิกัด GPS ไปยัง 191 และผู้ติดต่อฉุกเฉิน</p>
+
+            {!sosAlertActive ? (
+              <button onClick={triggerSos} className="w-40 h-40 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xl shadow-2xl mx-auto flex items-center justify-center pulse-sos">
+                กดส่ง SOS
+              </button>
+            ) : (
+              <div className="p-4 rounded-2xl bg-rose-600/30 border border-rose-400 text-white space-y-3">
+                <p className="font-bold">✓ ส่งสัญญาณ SOS ฉุกเฉินเรียบร้อยแล้ว!</p>
+                <p className="text-xs">พิกัด GPS 13.7563, 100.5018 ถูกส่งไปยังศูนย์ 191 แล้ว</p>
+                <button onClick={cancelSos} className="px-4 py-2 rounded-lg bg-white/10 text-xs">ยกเลิกสัญญาณ</button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3 text-xs font-bold pt-4">
+              <a href="tel:191" className="p-3 rounded-xl bg-blue-600/30 border border-blue-500 text-blue-300">โทร 191 (ตำรวจ)</a>
+              <a href="tel:1669" className="p-3 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300">โทร 1669 (รถพยาบาล)</a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function HomeView({ devices, toggleDevice }) {
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-pink-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="home" className="w-5 h-5 text-pink-400"></i> ควบคุมบ้านอัจฉริยะ (One Stop IoT)
+            </h2>
+            <p className="text-xs text-gray-300 mt-1">สั่งเปิด-ปิดไฟ แอร์ และอุปกรณ์ภายในบ้าน</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {devices.map(dev => (
+              <div key={dev.id} className={`glass-panel p-5 rounded-2xl flex items-center justify-between border ${dev.on ? 'border-pink-500 bg-pink-950/20' : 'border-white/10'}`}>
+                <div>
+                  <h4 className="font-bold text-sm text-white">{dev.name}</h4>
+                  <p className="text-xs text-gray-400">{dev.room} ({dev.wattage}W)</p>
+                </div>
+                <button onClick={() => toggleDevice(dev.id)} className={`w-12 h-7 rounded-full p-1 flex items-center ${dev.on ? 'bg-pink-500 justify-end' : 'bg-gray-700 justify-start'}`}>
+                  <span className="w-5 h-5 rounded-full bg-white"></span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function AiView({ setActiveTab }) {
+      const [chat, setChat] = useState([
+        { id: 1, sender: 'ai', text: 'สวัสดีครับคุณนรเศรษฐ์ ผมคือ One Stop AI Advisor ยินดีให้คำปรึกษาปัญหาบ้าน อาหาร สุขภาพ การเงิน และเทคโนโลยี 24 ชั่วโมงครับ' }
+      ]);
+      const [text, setText] = useState('');
+
+      const handleSend = () => {
+        if (!text) return;
+        const userMsg = { id: Date.now(), sender: 'user', text };
+        setChat(prev => [...prev, userMsg]);
+        setText('');
+        setTimeout(() => {
+          setChat(prev => [...prev, { id: Date.now()+1, sender: 'ai', text: `ยินดีให้คำแนะนำครับคุณนรเศรษฐ์ ในเรื่อง "${userMsg.text}" สามารถใช้บริการต่างๆ ผ่านแถบเมนูด้านบนได้เลยครับ` }]);
+        }, 1000);
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-indigo-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="bot" className="w-5 h-5 text-violet-400"></i> ผู้ช่วย AI ให้คำปรึกษาอัจฉริยะ (AI Advisor)
+            </h2>
+          </div>
+
+          <div className="glass-panel p-5 rounded-2xl h-[450px] flex flex-col justify-between space-y-4">
+            <div className="overflow-y-auto space-y-3 pr-2">
+              {chat.map(c => (
+                <div key={c.id} className={`p-3 rounded-xl text-xs max-w-md ${c.sender === 'user' ? 'ml-auto bg-indigo-600 text-white' : 'bg-slate-800 text-gray-200'}`}>
+                  {c.text}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2 pt-2 border-t border-white/10">
+              <input type="text" value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} className="flex-1 bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="พิมพ์คำถามของคุณ..." />
+              <button onClick={handleSend} className="px-5 py-3 rounded-xl bg-indigo-600 text-white font-bold text-xs">ส่ง</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function StocksView({ watchlist, toggleWatchlist }) {
+      const stocks = [
+        { symbol: 'PTT', price: 34.50, change: '+0.50 (+1.47%)', up: true },
+        { symbol: 'CPALL', price: 58.75, change: '+1.25 (+2.17%)', up: true },
+        { symbol: 'AOT', price: 62.00, change: '-0.50 (-0.80%)', up: false },
+        { symbol: 'ADVANC', price: 245.00, change: '+3.00 (+1.24%)', up: true }
+      ];
+
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-teal-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="trending-up" className="w-5 h-5 text-teal-400"></i> ตลาดหุ้น & การลงทุน (One Stop Trade)
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {stocks.map(s => (
+              <div key={s.symbol} className="glass-panel p-5 rounded-2xl flex items-center justify-between">
+                <div>
+                  <h4 className="font-extrabold text-base text-white">{s.symbol}</h4>
+                  <p className={`text-xs font-bold ${s.up ? 'text-emerald-400' : 'text-rose-400'}`}>{s.change}</p>
+                </div>
+                <span className="font-extrabold text-white text-lg">{s.price.toFixed(2)} ฿</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function NewsView() {
+      const news = [
+        { id: 1, title: 'ด่วน! ธนาคารแห่งประเทศไทยปรับประมาณการเศรษฐกิจไทยปี 2026 เติบโตแกร่งขึ้น', cat: 'เศรษฐกิจ' },
+        { id: 2, title: 'กทม. เตรียมเปิดให้บริการระบบจราจรอัจฉริยะ AI ลดปัญหารถติด 15 สี่แยกใหญ่', cat: 'สังคม & จราจร' },
+        { id: 3, title: 'สภาฯ ผ่านร่างกฎหมายส่งเสริมพลังงานสะอาด นำร่องโซลาร์รูฟท็อปเสรีในครัวเรือน', cat: 'การเมือง' }
+      ];
+
+      return (
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border-blue-500/30">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="newspaper" className="w-5 h-5 text-blue-400"></i> ศูนย์ข่าวสารบ้านเมือง (One Stop News)
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {news.map(n => (
+              <div key={n.id} className="glass-panel p-4 rounded-2xl flex items-center justify-between hover:border-blue-500">
+                <div>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">{n.cat}</span>
+                  <h4 className="font-bold text-sm text-white mt-1">{n.title}</h4>
+                </div>
+                <i data-lucide="chevron-right" className="w-5 h-5 text-gray-400"></i>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
