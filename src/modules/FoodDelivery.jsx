@@ -96,11 +96,21 @@ export default function FoodDelivery({ cart, addToCart, removeFromCart, clearCar
       <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-orange-950/60 to-slate-900 border-orange-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-xs font-semibold mb-2">
-            <UtensilsCrossed className="w-3.5 h-3.5" /> สั่งอาหารดิลิเวอรีด่วน
+            <UtensilsCrossed className="w-3.5 h-3.5" /> สั่งซื้ออาหาร
           </div>
-          <h2 className="text-2xl font-bold text-white">OmniEats Food Express</h2>
+          <h2 className="text-2xl font-bold text-white">สั่งซื้ออาหาร (GrabFood)</h2>
           <p className="text-xs text-gray-300">คัดสรรร้านอร่อยส่งตรงถึงหน้าบ้านคุณ รวดเร็ว สะอาด ปลอดภัย</p>
         </div>
+
+        <a 
+          href="https://www.grab.com/th/food/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform shrink-0"
+        >
+          <span>เปิดใช้งาน GrabFood</span>
+          <ArrowRight className="w-4 h-4" />
+        </a>
 
         {/* Search Input */}
         <div className="w-full md:w-72 relative">

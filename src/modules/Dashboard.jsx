@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  Car, UtensilsCrossed, Tv, CreditCard, AlertTriangle, Home, 
+  Car, UtensilsCrossed, ShoppingBag, CreditCard, AlertTriangle, Home, 
   Bot, TrendingUp, Newspaper, ArrowRight, Zap, Shield, Sparkles, 
   Thermometer, Power, CheckCircle, Clock
 } from 'lucide-react';
@@ -15,13 +15,13 @@ export default function Dashboard({ setActiveTab, smartHomeDevices, toggleDevice
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-semibold mb-3">
-              <Sparkles className="w-3.5 h-3.5" /> ยินดีต้อนรับสู่ OmniLife Hub
+              <Sparkles className="w-3.5 h-3.5" /> ยินดีต้อนรับสู่ One Stop Service
             </div>
             <h2 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
               ศูนย์รวมความสะดวกสบาย<span className="text-gradient-purple"> ประจำวันของคุณ</span>
             </h2>
             <p className="text-sm text-gray-300 mt-1 max-w-xl">
-              จัดการทุกเรื่องในชีวิตประจำวันอย่างง่ายดาย ตั้งแต่เรียกรถ สั่งอาหาร จ่ายบิล ควบคุมบ้าน ติดตามหุ้น ข่าวสาร และปรึกษา AI
+              จัดการทุกเรื่องในชีวิตประจำวันอย่างง่ายดาย ตั้งแต่เรียกรถ สั่งอาหาร สั่งสินค้าออนไลน์ จ่ายบิล ควบคุมบ้าน ติดตามหุ้น ข่าวสาร และปรึกษา AI
             </p>
           </div>
 
@@ -78,38 +78,47 @@ export default function Dashboard({ setActiveTab, smartHomeDevices, toggleDevice
           
           {/* 1. Ride */}
           <div 
-            onClick={() => setActiveTab('ride')}
+            onClick={() => {
+              window.open('https://www.grab.com/th/transport/', '_blank');
+              setActiveTab('ride');
+            }}
             className="glass-panel p-5 cursor-pointer hover:scale-[1.02] border hover:border-cyan-500/50 transition group"
           >
             <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-3 group-hover:scale-110 transition-transform">
               <Car className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-sm text-white group-hover:text-cyan-300">เรียกรถไปรับ-ส่ง</h4>
-            <p className="text-xs text-gray-400 mt-1">เรียกรถด่วน มอเตอร์ไซค์, แท็กซี่, รถ VIP</p>
+            <h4 className="font-bold text-sm text-white group-hover:text-cyan-300">เรียกรถรับ-ส่ง</h4>
+            <p className="text-xs text-gray-400 mt-1">Grab Transport ไปรับ-ส่งทุกที่</p>
           </div>
 
           {/* 2. Food */}
           <div 
-            onClick={() => setActiveTab('food')}
+            onClick={() => {
+              window.open('https://www.grab.com/th/food/', '_blank');
+              setActiveTab('food');
+            }}
             className="glass-panel p-5 cursor-pointer hover:scale-[1.02] border hover:border-orange-500/50 transition group"
           >
             <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 mb-3 group-hover:scale-110 transition-transform">
               <UtensilsCrossed className="w-6 h-6" />
             </div>
             <h4 className="font-bold text-sm text-white group-hover:text-orange-300">สั่งซื้ออาหาร</h4>
-            <p className="text-xs text-gray-400 mt-1">ร้านเด็ดรอบตัว ส่งร้อนถึงบ้านใน 20 นาที</p>
+            <p className="text-xs text-gray-400 mt-1">GrabFood สั่งอาหารส่งตรงถึงบ้านคุณ</p>
           </div>
 
           {/* 3. Mall */}
           <div 
-            onClick={() => setActiveTab('mall')}
+            onClick={() => {
+              window.open('https://shopee.co.th/', '_blank');
+              setActiveTab('mall');
+            }}
             className="glass-panel p-5 cursor-pointer hover:scale-[1.02] border hover:border-purple-500/50 transition group"
           >
             <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-3 group-hover:scale-110 transition-transform">
-              <Tv className="w-6 h-6" />
+              <ShoppingBag className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-sm text-white group-hover:text-purple-300">สั่งเครื่องใช้ไฟฟ้า</h4>
-            <p className="text-xs text-gray-400 mt-1">TV, ตู้เย็น, แอร์ ผ่อน 0% ส่งพร้อมติดตั้ง</p>
+            <h4 className="font-bold text-sm text-white group-hover:text-purple-300">สั่งสินค้าออนไลน์</h4>
+            <p className="text-xs text-gray-400 mt-1">Shopee เลือกซื้อสินค้าออนไลน์ครบครัน</p>
           </div>
 
           {/* 4. Bill Pay */}

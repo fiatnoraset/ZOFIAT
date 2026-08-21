@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  Tv, ShoppingCart, ShieldCheck, Truck, Check, Filter, 
-  Info, Star, CreditCard
+  ShoppingBag, ShoppingCart, ShieldCheck, Truck, Check, Filter, 
+  Info, Star, CreditCard, ArrowRight
 } from 'lucide-react';
 
 export default function ApplianceMall({ addToCart }) {
@@ -45,18 +45,18 @@ export default function ApplianceMall({ addToCart }) {
       price: 24500,
       installment: '2,450 ฿/เดือน (ผ่อน 0% 10 เดือน)',
       rating: 4.85,
-      img: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500&auto=format&fit=crop&q=60',
-      specs: ['แผ่นกรองฝุ่น PM 2.5', 'สั่งงานผ่านแอปมือถือ', 'เสียงเงียบเพียง 19 เดซิเบล', 'ฟรีบริการติดตั้งทั่วประเทศ']
+      img: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500&auto=format&fit=crop&q=60',
+      specs: ['กรองฝุ่น PM2.5 & แบคทีเรีย', 'ควบคุมผ่านมือถือ Wi-Fi', 'ทำงานเงียบสนิทเพียง 19 dB', 'ฟรีติดตั้งทั่วประเทศ']
     },
     {
       id: 504,
-      name: 'Roborock S8 Pro Ultra หุ่นยนต์ดูดฝุ่น & ถูพื้นอัตโนมัติ',
+      name: 'Roborock S8 Pro Ultra หุ่นยนต์ดูดฝุ่นซักผ้าถูอัตโนมัติ',
       category: 'vacuum',
       price: 32900,
       installment: '3,290 ฿/เดือน (ผ่อน 0% 10 เดือน)',
       rating: 4.98,
       img: 'https://images.unsplash.com/photo-1558317374-067fb5f30001?w=500&auto=format&fit=crop&q=60',
-      specs: ['แท่นชาร์จซักผ้าถูและเติมน้ำอัตโนมัติ', 'แรงดูด 6,000 Pa', 'สแกนห้องแบบ LiDAR 3D', 'หลบหลีกสิ่งกีดขวาง AI']
+      specs: ['แรงดูดทรงพลัง 6,000 Pa', 'แท่นชาร์จซักผ้าถูและเติมน้ำอัตโนมัติ', 'ระบบสแกนวัตถุ AI 3D Obstacle', 'ระบบถูพื้นด้วยคลื่นเสียง Sonic Vibration']
     }
   ];
 
@@ -77,12 +77,6 @@ export default function ApplianceMall({ addToCart }) {
       <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-purple-950/60 to-slate-900 border-purple-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold mb-2">
-            <Tv className="w-3.5 h-3.5" /> ห้างสรรพสินค้าเครื่องใช้ไฟฟ้า Smart Home
-          </div>
-          <h2 className="text-2xl font-bold text-white">OmniHome Mall</h2>
-          <p className="text-xs text-gray-300">เครื่องใช้ไฟฟ้าแบรนด์ชั้นนำ ผ่อน 0% สูงสุด 10 เดือน พร้อมบริการจัดส่งและติดตั้งฟรี</p>
-        </div>
-
         <div className="flex items-center gap-2 text-xs text-purple-300">
           <Truck className="w-4 h-4 text-purple-400" /> จัดส่งฟรีถึงหน้าบ้านใน 24 ชม.
         </div>

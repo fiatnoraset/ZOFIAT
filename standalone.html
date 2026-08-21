@@ -284,9 +284,9 @@
             <div className="glass-panel p-2 rounded-2xl flex items-center gap-2 overflow-x-auto">
               {[
                 { id: 'dashboard', label: 'หน้าหลัก', icon: 'layout-dashboard', color: 'text-indigo-400' },
-                { id: 'ride', label: 'เรียกรถ', icon: 'car', color: 'text-cyan-400' },
-                { id: 'food', label: 'สั่งอาหาร', icon: 'utensils-crossed', color: 'text-orange-400' },
-                { id: 'mall', label: 'เครื่องใช้ไฟฟ้า', icon: 'tv', color: 'text-purple-400' },
+                { id: 'ride', label: 'เรียกรถ', icon: 'car', color: 'text-cyan-400', url: 'https://www.grab.com/th/transport/' },
+                { id: 'food', label: 'สั่งอาหาร', icon: 'utensils-crossed', color: 'text-orange-400', url: 'https://www.grab.com/th/food/' },
+                { id: 'mall', label: 'สั่งสินค้าออนไลน์', icon: 'shopping-bag', color: 'text-purple-400', url: 'https://shopee.co.th/' },
                 { id: 'bill', label: 'จ่ายบิล', icon: 'credit-card', color: 'text-emerald-400' },
                 { id: 'sos', label: 'เหตุด่วน SOS', icon: 'alert-triangle', color: 'text-rose-500', hot: true },
                 { id: 'home', label: 'ควบคุมบ้าน', icon: 'home', color: 'text-pink-400' },
@@ -296,7 +296,10 @@
               ].map(item => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => {
+                    if (item.url) window.open(item.url, '_blank');
+                    setActiveTab(item.id);
+                  }}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition ${
                     activeTab === item.id ? 'bg-white/15 text-white font-bold border border-white/20' : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
@@ -457,9 +460,9 @@
           {/* 9 Grid Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
             {[
-              { id: 'ride', title: 'เรียกรถรับ-ส่ง', desc: 'แท็กซี่, มอเตอร์ไซค์, SUV VIP', icon: 'car', color: 'text-cyan-400', border: 'hover:border-cyan-500' },
-              { id: 'food', title: 'สั่งซื้ออาหาร', desc: 'ร้านเด็ด ส่งร้อนใน 20 นาที', icon: 'utensils-crossed', color: 'text-orange-400', border: 'hover:border-orange-500' },
-              { id: 'mall', title: 'สั่งเครื่องใช้ไฟฟ้า', desc: 'TV, ตู้เย็น, แอร์ ผ่อน 0%', icon: 'tv', color: 'text-purple-400', border: 'hover:border-purple-500' },
+              { id: 'ride', title: 'เรียกรถรับ-ส่ง', desc: 'Grab Transport ไปรับ-ส่งทุกที่', icon: 'car', color: 'text-cyan-400', border: 'hover:border-cyan-500', url: 'https://www.grab.com/th/transport/' },
+              { id: 'food', title: 'สั่งซื้ออาหาร', desc: 'GrabFood สั่งอาหารส่งตรงถึงบ้าน', icon: 'utensils-crossed', color: 'text-orange-400', border: 'hover:border-orange-500', url: 'https://www.grab.com/th/food/' },
+              { id: 'mall', title: 'สั่งสินค้าออนไลน์', desc: 'Shopee เลือกซื้อสินค้าออนไลน์ครบครัน', icon: 'shopping-bag', color: 'text-purple-400', border: 'hover:border-purple-500', url: 'https://shopee.co.th/' },
               { id: 'bill', title: 'จ่ายบิลค่าน้ำ-ไฟ', desc: 'สแกน QR ฟรีค่าธรรมเนียม', icon: 'credit-card', color: 'text-emerald-400', border: 'hover:border-emerald-500' },
               { id: 'sos', title: 'แจ้งเหตุด่วน SOS', desc: 'ปุ่มฉุกเฉิน โทร 191/1669', icon: 'alert-triangle', color: 'text-rose-500', border: 'border-rose-500/40 bg-rose-950/20' },
               { id: 'home', title: 'สั่งเปิด-ปิดบ้าน', desc: 'ควบคุมสวิตช์ไฟ & แอร์ IoT', icon: 'home', color: 'text-pink-400', border: 'hover:border-pink-500' },
@@ -469,7 +472,10 @@
             ].map(card => (
               <div 
                 key={card.id} 
-                onClick={() => setActiveTab(card.id)}
+                onClick={() => {
+                  if (card.url) window.open(card.url, '_blank');
+                  setActiveTab(card.id);
+                }}
                 className={`glass-panel p-5 rounded-2xl cursor-pointer hover:scale-[1.02] transition border ${card.border}`}
               >
                 <div className={`w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-3 ${card.color}`}>
@@ -545,11 +551,22 @@
 
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-cyan-500/30">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="car" className="w-5 h-5 text-cyan-400"></i> บริการเรียกรถด่วน (One Stop Ride)
-            </h2>
-            <p className="text-xs text-gray-300 mt-1">ระบุจุดรับ-จุดส่ง เลือกรถที่ต้องการ มารับใน 5 นาที</p>
+          <div className="glass-panel p-6 rounded-3xl border-cyan-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="car" className="w-5 h-5 text-cyan-400"></i> บริการเรียกรถรับ-ส่ง (Grab Transport)
+              </h2>
+              <p className="text-xs text-gray-300 mt-1">เรียกรถด่วน แท็กซี่ มอเตอร์ไซค์ รถ VIP ปลอดภัย สะดวก รวดเร็ว</p>
+            </div>
+            <a 
+              href="https://www.grab.com/th/transport/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <span>เปิดใช้งาน Grab Transport</span>
+              <i data-lucide="external-link" className="w-4 h-4"></i>
+            </a>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -615,11 +632,22 @@
 
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-orange-500/30">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="utensils-crossed" className="w-5 h-5 text-orange-400"></i> สั่งอาหารดิลิเวอรีด่วน (One Stop Eats)
-            </h2>
-            <p className="text-xs text-gray-300 mt-1">ร้านดังรอบตัว จัดส่งร้อนถึงบ้านใน 20 นาที</p>
+          <div className="glass-panel p-6 rounded-3xl border-orange-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="utensils-crossed" className="w-5 h-5 text-orange-400"></i> สั่งซื้ออาหาร (GrabFood)
+              </h2>
+              <p className="text-xs text-gray-300 mt-1">ร้านเด็ดรอบตัว จัดส่งอาหารร้อนถึงบ้านคุณได้อย่างรวดเร็ว</p>
+            </div>
+            <a 
+              href="https://www.grab.com/th/food/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <span>เปิดใช้งาน GrabFood</span>
+              <i data-lucide="external-link" className="w-4 h-4"></i>
+            </a>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -676,11 +704,22 @@
 
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-purple-500/30">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="tv" className="w-5 h-5 text-purple-400"></i> ห้างเครื่องใช้ไฟฟ้า Smart Home (One Stop Mall)
-            </h2>
-            <p className="text-xs text-gray-300 mt-1">สินค้าประกันศูนย์ไทย ผ่อน 0% ส่งพร้อมติดตั้งฟรี</p>
+          <div className="glass-panel p-6 rounded-3xl border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="shopping-bag" className="w-5 h-5 text-purple-400"></i> สั่งสินค้าออนไลน์ (Shopee)
+              </h2>
+              <p className="text-xs text-gray-300 mt-1">เลือกซื้อสินค้าออนไลน์ เครื่องใช้ไฟฟ้า แฟชั่น อุปกรณ์ IT บน Shopee</p>
+            </div>
+            <a 
+              href="https://shopee.co.th/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <span>เปิดใช้งาน Shopee</span>
+              <i data-lucide="external-link" className="w-4 h-4"></i>
+            </a>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

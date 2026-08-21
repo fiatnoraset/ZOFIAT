@@ -1,15 +1,15 @@
 import React from 'react';
 import { 
-  LayoutDashboard, Car, UtensilsCrossed, Tv, CreditCard, 
+  LayoutDashboard, Car, UtensilsCrossed, ShoppingBag, CreditCard, 
   AlertTriangle, Home, Bot, TrendingUp, Newspaper 
 } from 'lucide-react';
 
 export default function Navigation({ activeTab, setActiveTab }) {
   const navItems = [
     { id: 'dashboard', label: 'หน้าหลัก', icon: LayoutDashboard, color: 'text-indigo-400', border: 'border-indigo-500' },
-    { id: 'ride', label: 'เรียกรถ', icon: Car, color: 'text-cyan-400', border: 'border-cyan-500' },
-    { id: 'food', label: 'สั่งอาหาร', icon: UtensilsCrossed, color: 'text-orange-400', border: 'border-orange-500' },
-    { id: 'mall', label: 'เครื่องใช้ไฟฟ้า', icon: Tv, color: 'text-purple-400', border: 'border-purple-500' },
+    { id: 'ride', label: 'เรียกรถ', icon: Car, color: 'text-cyan-400', border: 'border-cyan-500', url: 'https://www.grab.com/th/transport/' },
+    { id: 'food', label: 'สั่งอาหาร', icon: UtensilsCrossed, color: 'text-orange-400', border: 'border-orange-500', url: 'https://www.grab.com/th/food/' },
+    { id: 'mall', label: 'สั่งสินค้าออนไลน์', icon: ShoppingBag, color: 'text-purple-400', border: 'border-purple-500', url: 'https://shopee.co.th/' },
     { id: 'bill', label: 'จ่ายบิล', icon: CreditCard, color: 'text-emerald-400', border: 'border-emerald-500' },
     { id: 'sos', label: 'เหตุด่วน SOS', icon: AlertTriangle, color: 'text-rose-500', border: 'border-rose-500', badge: 'HOT' },
     { id: 'home', label: 'ควบคุมบ้าน', icon: Home, color: 'text-pink-400', border: 'border-pink-500' },
@@ -27,7 +27,10 @@ export default function Navigation({ activeTab, setActiveTab }) {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => {
+                if (item.url) window.open(item.url, '_blank');
+                setActiveTab(item.id);
+              }}
               className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-medium text-xs transition-all duration-200 ${
                 isActive
                   ? `bg-white/10 text-white shadow-lg border ${item.border} backdrop-blur-md`

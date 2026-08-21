@@ -45,14 +45,23 @@ export default function RideHailing({ activeRide, setActiveRide }) {
     <div className="space-y-6 animate-fade-in">
       
       {/* Module Title Banner */}
-      <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-cyan-950/60 to-slate-900 border-cyan-500/30 flex items-center justify-between">
+      <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-cyan-950/60 to-slate-900 border-cyan-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold mb-2">
-            <Car className="w-3.5 h-3.5" /> บริการเรียกรถด่วน
+            <Car className="w-3.5 h-3.5" /> บริการเรียกรถรับ-ส่ง
           </div>
-          <h2 className="text-2xl font-bold text-white">เรียกรถเดินทาง (OmniRide)</h2>
+          <h2 className="text-2xl font-bold text-white">เรียกรถเดินทาง (Grab Transport)</h2>
           <p className="text-xs text-gray-300">บริการรถรับ-ส่ง ปลอดภัย ติดตามเส้นทางแบบเรียลไทม์ 24 ชม.</p>
         </div>
+        <a 
+          href="https://www.grab.com/th/transport/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+        >
+          <span>เปิดใช้งาน Grab Transport</span>
+          <ArrowRight className="w-4 h-4" />
+        </a>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
