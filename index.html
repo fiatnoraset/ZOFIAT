@@ -284,10 +284,10 @@
             <div className="glass-panel p-2 rounded-2xl flex items-center gap-2 overflow-x-auto">
               {[
                 { id: 'dashboard', label: 'หน้าหลัก', icon: 'layout-dashboard', color: 'text-indigo-400' },
-                { id: 'ride', label: 'เรียกรถ', icon: 'car', color: 'text-cyan-400', url: 'https://www.grab.com/th/transport/' },
-                { id: 'food', label: 'สั่งอาหาร', icon: 'utensils-crossed', color: 'text-orange-400', url: 'https://www.grab.com/th/food/' },
-                { id: 'mall', label: 'สั่งสินค้าออนไลน์', icon: 'shopping-bag', color: 'text-purple-400', url: 'https://shopee.co.th/' },
-                { id: 'bill', label: 'จ่ายบิล', icon: 'credit-card', color: 'text-emerald-400' },
+                { id: 'ride', label: 'เรียกรถ (GrabCar)', icon: 'car', color: 'text-cyan-400' },
+                { id: 'food', label: 'สั่งอาหาร (GrabFood)', icon: 'utensils-crossed', color: 'text-orange-400' },
+                { id: 'mall', label: 'สั่งสินค้าออนไลน์ (Shopee)', icon: 'shopping-bag', color: 'text-purple-400' },
+                { id: 'bill', label: 'จ่ายบิลค่าไฟ/น้ำ', icon: 'credit-card', color: 'text-emerald-400' },
                 { id: 'sos', label: 'เหตุด่วน SOS', icon: 'alert-triangle', color: 'text-rose-500', hot: true },
                 { id: 'home', label: 'ควบคุมบ้าน', icon: 'home', color: 'text-pink-400' },
                 { id: 'ai', label: 'ผู้ช่วย AI', icon: 'bot', color: 'text-violet-400', badge: 'AI' },
@@ -296,10 +296,7 @@
               ].map(item => (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    if (item.url) window.open(item.url, '_blank');
-                    setActiveTab(item.id);
-                  }}
+                  onClick={() => setActiveTab(item.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition ${
                     activeTab === item.id ? 'bg-white/15 text-white font-bold border border-white/20' : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
@@ -460,10 +457,10 @@
           {/* 9 Grid Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
             {[
-              { id: 'ride', title: 'เรียกรถรับ-ส่ง', desc: 'Grab Transport ไปรับ-ส่งทุกที่', icon: 'car', color: 'text-cyan-400', border: 'hover:border-cyan-500', url: 'https://www.grab.com/th/transport/' },
-              { id: 'food', title: 'สั่งซื้ออาหาร', desc: 'GrabFood สั่งอาหารส่งตรงถึงบ้าน', icon: 'utensils-crossed', color: 'text-orange-400', border: 'hover:border-orange-500', url: 'https://www.grab.com/th/food/' },
-              { id: 'mall', title: 'สั่งสินค้าออนไลน์', desc: 'Shopee เลือกซื้อสินค้าออนไลน์ครบครัน', icon: 'shopping-bag', color: 'text-purple-400', border: 'hover:border-purple-500', url: 'https://shopee.co.th/' },
-              { id: 'bill', title: 'จ่ายบิลค่าน้ำ-ไฟ', desc: 'สแกน QR ฟรีค่าธรรมเนียม', icon: 'credit-card', color: 'text-emerald-400', border: 'hover:border-emerald-500' },
+              { id: 'ride', title: 'เรียกรถรับ-ส่ง (GrabCar)', desc: 'ฝังพอร์ทัล Grab Transport ในแอป', icon: 'car', color: 'text-cyan-400', border: 'hover:border-cyan-500' },
+              { id: 'food', title: 'สั่งซื้ออาหาร (GrabFood)', desc: 'ฝังพอร์ทัล GrabFood สั่งอาหารในแอป', icon: 'utensils-crossed', color: 'text-orange-400', border: 'hover:border-orange-500' },
+              { id: 'mall', title: 'สั่งสินค้าออนไลน์ (Shopee)', desc: 'ฝังพอร์ทัล Shopee ช้อปปิ้งออนไลน์ในแอป', icon: 'shopping-bag', color: 'text-purple-400', border: 'hover:border-purple-500' },
+              { id: 'bill', title: 'จ่ายค่าไฟ/น้ำ (MEA & PEA)', desc: 'ฝังพอร์ทัล e-Service จ่ายบิลค่าไฟตรง', icon: 'credit-card', color: 'text-emerald-400', border: 'hover:border-emerald-500' },
               { id: 'sos', title: 'แจ้งเหตุด่วน SOS', desc: 'ปุ่มฉุกเฉิน โทร 191/1669', icon: 'alert-triangle', color: 'text-rose-500', border: 'border-rose-500/40 bg-rose-950/20' },
               { id: 'home', title: 'สั่งเปิด-ปิดบ้าน', desc: 'ควบคุมสวิตช์ไฟ & แอร์ IoT', icon: 'home', color: 'text-pink-400', border: 'hover:border-pink-500' },
               { id: 'ai', title: 'ผู้ช่วย AI ปรึกษา', desc: 'ไขข้อสงสัยบ้าน อาหาร สุขภาพ', icon: 'bot', color: 'text-violet-400', border: 'hover:border-violet-500' },
@@ -472,10 +469,7 @@
             ].map(card => (
               <div 
                 key={card.id} 
-                onClick={() => {
-                  if (card.url) window.open(card.url, '_blank');
-                  setActiveTab(card.id);
-                }}
+                onClick={() => setActiveTab(card.id)}
                 className={`glass-panel p-5 rounded-2xl cursor-pointer hover:scale-[1.02] transition border ${card.border}`}
               >
                 <div className={`w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-3 ${card.color}`}>
@@ -540,6 +534,8 @@
       const [status, setStatus] = useState('idle');
       const [pickup, setPickup] = useState('คอนโด แอสปาย พระราม 9');
       const [dest, setDest] = useState('เซ็นทรัลเวิลด์ ราชประสงค์');
+      const [rideType, setRideType] = useState('car');
+      const [viewMode, setViewMode] = useState('app');
 
       const handleBook = () => {
         setStatus('searching');
@@ -551,150 +547,248 @@
 
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-cyan-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="glass-panel p-6 rounded-3xl border-cyan-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold mb-2">
+                <i data-lucide="car" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลบริการในแอป (In-App Grab Transport)
+              </span>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <i data-lucide="car" className="w-5 h-5 text-cyan-400"></i> บริการเรียกรถรับ-ส่ง (Grab Transport)
+                บริการเรียกรถเดินทาง (Grab Transport / GrabCar)
               </h2>
-              <p className="text-xs text-gray-300 mt-1">เรียกรถด่วน แท็กซี่ มอเตอร์ไซค์ รถ VIP ปลอดภัย สะดวก รวดเร็ว</p>
+              <p className="text-xs text-gray-300 mt-1">เรียกรถด่วน มอเตอร์ไซค์ แท็กซี่ รถ VIP พร้อมติดตามเส้นทาง GPS แบบเรียลไทม์</p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+              <button 
+                onClick={() => setViewMode('app')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${viewMode === 'app' ? 'bg-cyan-500 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                เรียกรถด่วน
+              </button>
+              <button 
+                onClick={() => setViewMode('embed')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-cyan-500 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <i data-lucide="globe" className="w-3.5 h-3.5"></i> พอร์ทัลเว็บ Grab
+              </button>
+            </div>
+          </div>
+
+          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span className="text-gray-400">https://www.grab.com/th/transport/</span>
             </div>
             <a 
               href="https://www.grab.com/th/transport/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+              className="px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
             >
-              <span>เปิดใช้งาน Grab Transport</span>
-              <i data-lucide="external-link" className="w-4 h-4"></i>
+              <span>เปิดเต็มจอ</span>
+              <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
             </a>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-5 glass-panel p-5 rounded-2xl space-y-4">
-              <h3 className="font-bold text-sm text-white">ระบุเส้นทางเดินทาง</h3>
-              <input type="text" value={pickup} onChange={e => setPickup(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดรับ..." />
-              <input type="text" value={dest} onChange={e => setDest(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดส่ง..." />
+          {viewMode === 'embed' ? (
+            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-cyan-500/30">
+              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+                <iframe 
+                  src="https://www.grab.com/th/transport/" 
+                  className="w-full h-full border-0"
+                  title="Grab Transport Portal"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5 glass-panel p-5 rounded-2xl space-y-4">
+                <h3 className="font-bold text-sm text-white">ระบุเส้นทางเดินทาง</h3>
+                <input type="text" value={pickup} onChange={e => setPickup(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดรับ..." />
+                <input type="text" value={dest} onChange={e => setDest(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดส่ง..." />
 
-              <h3 className="font-bold text-sm text-white pt-2">ประเภทรถ</h3>
-              <div className="space-y-2">
-                <div className="glass-card p-3 rounded-xl flex justify-between border-cyan-500 border">
-                  <div>
-                    <p className="text-xs font-bold text-white">Standard Car</p>
-                    <p className="text-[10px] text-gray-400">แอร์เย็น นั่งสบาย 4 ที่นั่ง</p>
+                <h3 className="font-bold text-sm text-white pt-2">ประเภทรถ Grab</h3>
+                <div className="space-y-2">
+                  {[
+                    { id: 'bike', name: 'GrabBike (Win)', desc: 'รวดเร็ว คล่องตัว', price: '45 ฿' },
+                    { id: 'car', name: 'GrabCar (Standard)', desc: 'แอร์เย็น นั่งสบาย 4 ที่นั่ง', price: '125 ฿' },
+                    { id: 'suv', name: 'GrabCar Premium / SUV', desc: 'หรูหรา กว้างขวาง 6 ที่นั่ง', price: '240 ฿' },
+                  ].map(v => (
+                    <div 
+                      key={v.id}
+                      onClick={() => setRideType(v.id)}
+                      className={`glass-card p-3 rounded-xl flex justify-between cursor-pointer border ${rideType === v.id ? 'border-cyan-500 bg-cyan-950/30' : 'border-white/10'}`}
+                    >
+                      <div>
+                        <p className="text-xs font-bold text-white">{v.name}</p>
+                        <p className="text-[10px] text-gray-400">{v.desc}</p>
+                      </div>
+                      <span className="font-extrabold text-cyan-400 text-sm">{v.price}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {status === 'idle' && (
+                  <button onClick={handleBook} className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg hover:brightness-110">
+                    ยืนยันเรียกรถผ่าน Grab ทันที
+                  </button>
+                )}
+                {status === 'assigned' && (
+                  <button onClick={() => { setStatus('idle'); setActiveRide(false); }} className="w-full py-3 rounded-xl bg-gray-700 text-white font-bold text-xs">
+                    ยกเลิกการเดินทาง
+                  </button>
+                )}
+              </div>
+
+              <div className="lg:col-span-7 glass-panel p-4 h-[420px] rounded-2xl relative overflow-hidden bg-slate-950 flex flex-col justify-between border border-cyan-500/20">
+                <div className="flex justify-between items-center bg-black/70 p-3 rounded-xl text-xs z-10">
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> 📍 แผนที่ GPS ดาวเทียมสด (Grab Map)</span>
+                  <span className="text-cyan-400 font-bold">ระยะทาง 5.8 กม. (~14 นาที)</span>
+                </div>
+
+                {status === 'searching' && (
+                  <div className="m-auto text-center p-6 glass-panel rounded-2xl border border-cyan-500/40 animate-pulse">
+                    <p className="font-bold text-sm text-cyan-300">กำลังส่งสัญญาณค้นหาคนขับ Grab ใกล้คุณ...</p>
+                    <p className="text-xs text-gray-400 mt-1">รัศมี 2.5 กิโลเมตร</p>
                   </div>
-                  <span className="font-extrabold text-cyan-400 text-sm">125 ฿</span>
+                )}
+
+                {status === 'assigned' && (
+                  <div className="m-auto text-center p-5 glass-panel rounded-2xl border-2 border-emerald-500 shadow-2xl bg-emerald-950/40">
+                    <p className="font-bold text-sm text-emerald-300">✓ พบนายช่างคนขับ Grab แล้ว: คุณวิชัย สุขเกษม</p>
+                    <p className="text-xs text-white font-semibold mt-1">Toyota Camry สีดำ (ทะเบียน 1กข 8892 BKK)</p>
+                    <p className="text-xs text-emerald-400 mt-1">กำลังเดินทางมารับคุณใน 4 นาที</p>
+                  </div>
+                )}
+
+                <div className="flex justify-between text-[11px] text-gray-300 bg-black/70 p-3 rounded-xl z-10">
+                  <span>จุดรับ: {pickup}</span>
+                  <span>จุดส่ง: {dest}</span>
                 </div>
-              </div>
-
-              {status === 'idle' && (
-                <button onClick={handleBook} className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg">
-                  ยืนยันเรียกรถทันที
-                </button>
-              )}
-            </div>
-
-            <div className="lg:col-span-7 glass-panel p-4 h-96 rounded-2xl relative overflow-hidden bg-slate-950 flex flex-col justify-between">
-              <div className="flex justify-between items-center bg-black/60 p-3 rounded-xl text-xs">
-                <span>📍 แผนที่ GPS สด</span>
-                <span className="text-cyan-400 font-bold">ระยะทาง 5.8 กม. (~14 นาที)</span>
-              </div>
-
-              {status === 'searching' && (
-                <div className="m-auto text-center p-4 glass-panel rounded-xl">
-                  <p className="font-bold text-sm text-cyan-300">กำลังค้นหาคนขับใกล้คุณ...</p>
-                </div>
-              )}
-
-              {status === 'assigned' && (
-                <div className="m-auto text-center p-4 glass-panel rounded-xl border-emerald-500">
-                  <p className="font-bold text-sm text-emerald-300">พบนายช่างคนขับแล้ว: คุณวิชัย (Toyota Camry 1กข 8892)</p>
-                  <p className="text-xs text-gray-300 mt-1">กำลังเดินทางมารับใน 4 นาที</p>
-                </div>
-              )}
-
-              <div className="flex justify-between text-[11px] text-gray-400">
-                <span>จุดรับ: {pickup}</span>
-                <span>จุดส่ง: {dest}</span>
               </div>
             </div>
-          </div>
+          )}
         </div>
       );
     }
 
     function FoodView({ cart, addToCart, removeFromCart, clearCart }) {
+      const [viewMode, setViewMode] = useState('app');
       const restaurants = [
-        { id: 101, name: 'ข้าวมันไก่ต้มหนังนุ่ม + น้ำซุปฟัก', price: 65, resto: 'ข้าวมันไก่เฮียเม้ง' },
-        { id: 201, name: 'ทงคตสึราเมน ซุปกระดูกหมู', price: 180, resto: 'Ramen Ichiban' },
-        { id: 301, name: 'ส้มตำปูปลาร้าเครื่องแน่น', price: 60, resto: 'ส้มตำแซ่บเวอร์' },
-        { id: 401, name: 'Uji Matcha Latte เย็น', price: 120, resto: 'Cozy Matcha Cafe' }
+        { id: 101, name: 'ข้าวมันไก่ต้มหนังนุ่ม + น้ำซุปฟัก', price: 65, resto: 'ข้าวมันไก่เฮียเม้ง', rating: 4.9, time: '15-25 นาที' },
+        { id: 201, name: 'ทงคตสึราเมน ซุปกระดูกหมูเข้มข้น', price: 180, resto: 'Ramen Ichiban', rating: 4.8, time: '20-30 นาที' },
+        { id: 301, name: 'ส้มตำปูปลาร้าเครื่องแน่น', price: 60, resto: 'ส้มตำแซ่บเวอร์', rating: 4.9, time: '10-20 นาที' },
+        { id: 401, name: 'Uji Matcha Latte เย็น', price: 120, resto: 'Cozy Matcha Cafe', rating: 4.95, time: '10-15 นาที' }
       ];
 
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-orange-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="glass-panel p-6 rounded-3xl border-orange-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-xs font-semibold mb-2">
+                <i data-lucide="utensils-crossed" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลบริการในแอป (In-App GrabFood)
+              </span>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <i data-lucide="utensils-crossed" className="w-5 h-5 text-orange-400"></i> สั่งซื้ออาหาร (GrabFood)
+                สั่งซื้ออาหารดิลิเวอรี (GrabFood)
               </h2>
-              <p className="text-xs text-gray-300 mt-1">ร้านเด็ดรอบตัว จัดส่งอาหารร้อนถึงบ้านคุณได้อย่างรวดเร็ว</p>
+              <p className="text-xs text-gray-300 mt-1">เลือกร้านเด็ดรอบตัว สั่งอาหารส่งร้อนถึงบ้านคุณได้อย่างรวดเร็วใน 20 นาที</p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+              <button 
+                onClick={() => setViewMode('app')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${viewMode === 'app' ? 'bg-orange-500 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                เมนูแนะนำ
+              </button>
+              <button 
+                onClick={() => setViewMode('embed')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-orange-500 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <i data-lucide="globe" className="w-3.5 h-3.5"></i> พอร์ทัลเว็บ GrabFood
+              </button>
+            </div>
+          </div>
+
+          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+              <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+              <span className="text-gray-400">https://www.grab.com/th/food/</span>
             </div>
             <a 
               href="https://www.grab.com/th/food/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+              className="px-3.5 py-2 rounded-xl bg-orange-600/30 hover:bg-orange-600/50 text-orange-300 border border-orange-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
             >
-              <span>เปิดใช้งาน GrabFood</span>
-              <i data-lucide="external-link" className="w-4 h-4"></i>
+              <span>เปิดเต็มจอ</span>
+              <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
             </a>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {restaurants.map(item => (
-                <div key={item.id} className="glass-panel p-4 rounded-2xl space-y-2">
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-orange-500/20 text-orange-300">{item.resto}</span>
-                  <h4 className="font-bold text-sm text-white">{item.name}</h4>
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="font-extrabold text-orange-400 text-sm">{item.price} ฿</span>
-                    <button onClick={() => addToCart(item)} className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs">
-                      + เพิ่มลงตะกร้า
-                    </button>
-                  </div>
-                </div>
-              ))}
+          {viewMode === 'embed' ? (
+            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-orange-500/30">
+              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+                <iframe 
+                  src="https://www.grab.com/th/food/" 
+                  className="w-full h-full border-0"
+                  title="GrabFood Portal"
+                />
+              </div>
             </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {restaurants.map(item => (
+                  <div key={item.id} className="glass-panel p-4 rounded-2xl space-y-2 border border-white/10 hover:border-orange-500/50 transition">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 font-bold">{item.resto}</span>
+                      <span className="text-[10px] text-gray-400">⭐ {item.rating} ({item.time})</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-white">{item.name}</h4>
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="font-extrabold text-orange-400 text-sm">{item.price} ฿</span>
+                      <button onClick={() => addToCart(item)} className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs">
+                        + เพิ่มลงตะกร้า
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-            <div className="lg:col-span-4 glass-panel p-5 rounded-2xl space-y-4">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                <i data-lucide="shopping-bag" className="w-4 h-4 text-orange-400"></i> ตะกร้าของคุณ
-              </h3>
-              {cart.map(i => (
-                <div key={i.id} className="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
-                  <div>
-                    <p className="font-bold text-white">{i.name}</p>
-                    <p className="text-orange-400">{i.price} ฿</p>
+              <div className="lg:col-span-4 glass-panel p-5 rounded-2xl space-y-4 border border-orange-500/20">
+                <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                  <i data-lucide="shopping-bag" className="w-4 h-4 text-orange-400"></i> ตะกร้า GrabFood ของคุณ
+                </h3>
+                {cart.map(i => (
+                  <div key={i.id} className="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
+                    <div>
+                      <p className="font-bold text-white">{i.name}</p>
+                      <p className="text-orange-400">{i.price} ฿</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => removeFromCart(i.id)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
+                      <span className="font-bold text-white">{i.quantity}</span>
+                      <button onClick={() => addToCart(i)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => removeFromCart(i.id)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
-                    <span className="font-bold text-white">{i.quantity}</span>
-                    <button onClick={() => addToCart(i)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
-                  </div>
-                </div>
-              ))}
-              {cart.length > 0 && (
-                <button onClick={() => { alert('สั่งซื้อสำเร็จ! ไรเดอร์กำลังจัดส่ง'); clearCart(); }} className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs shadow-lg">
-                  ชำระเงินสั่งซื้อทันที
-                </button>
-              )}
+                ))}
+                {cart.length > 0 ? (
+                  <button onClick={() => { alert('สั่งซื้อผ่าน GrabFood สำเร็จ! ไรเดอร์กำลังจัดส่งอาหาร'); clearCart(); }} className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs shadow-lg">
+                    ชำระเงินสั่งซื้อ GrabFood ทันที
+                  </button>
+                ) : (
+                  <p className="text-xs text-gray-400 text-center py-4">ไม่มีสินค้าในตะกร้า</p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       );
     }
 
     function MallView({ addToCart }) {
+      const [viewMode, setViewMode] = useState('app');
       const items = [
         { id: 501, name: 'Samsung Neo QLED 4K Smart TV 65 นิ้ว', price: 28990, desc: 'ผ่อน 0% 10 เดือน' },
         { id: 502, name: 'LG InstaView ตู้เย็น 4 ประตู (21.7 คิว)', price: 45900, desc: 'เคาะ 2 ครั้งมองเห็นข้างใน' },
@@ -704,73 +798,173 @@
 
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="glass-panel p-6 rounded-3xl border-purple-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold mb-2">
+                <i data-lucide="shopping-bag" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลบริการในแอป (In-App Shopee Shopping)
+              </span>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <i data-lucide="shopping-bag" className="w-5 h-5 text-purple-400"></i> สั่งสินค้าออนไลน์ (Shopee)
+                สั่งสินค้าออนไลน์ (Shopee)
               </h2>
-              <p className="text-xs text-gray-300 mt-1">เลือกซื้อสินค้าออนไลน์ เครื่องใช้ไฟฟ้า แฟชั่น อุปกรณ์ IT บน Shopee</p>
+              <p className="text-xs text-gray-300 mt-1">เลือกซื้อสินค้าออนไลน์ เครื่องใช้ไฟฟ้า แฟชั่น อุปกรณ์ IT สินค้าครบครันบน Shopee</p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+              <button 
+                onClick={() => setViewMode('app')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${viewMode === 'app' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                สินค้าแนะนำ
+              </button>
+              <button 
+                onClick={() => setViewMode('embed')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <i data-lucide="globe" className="w-3.5 h-3.5"></i> พอร์ทัลเว็บ Shopee
+              </button>
+            </div>
+          </div>
+
+          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+              <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+              <span className="text-gray-400">https://shopee.co.th/</span>
             </div>
             <a 
               href="https://shopee.co.th/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+              className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
             >
-              <span>เปิดใช้งาน Shopee</span>
-              <i data-lucide="external-link" className="w-4 h-4"></i>
+              <span>เปิดเต็มจอ</span>
+              <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
             </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {items.map(prod => (
-              <div key={prod.id} className="glass-panel p-5 rounded-2xl flex flex-col justify-between space-y-3">
-                <div>
-                  <h4 className="font-bold text-sm text-white">{prod.name}</h4>
-                  <p className="text-[11px] text-purple-400 mt-1">{prod.desc}</p>
-                </div>
-                <div>
-                  <p className="font-extrabold text-white text-base mb-2">{prod.price.toLocaleString()} ฿</p>
-                  <button onClick={() => { addToCart(prod); alert('หยอดสินค้าใส่ตะกร้าเรียบร้อยแล้ว!'); }} className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs">
-                    สั่งซื้อทันที
-                  </button>
-                </div>
+          {viewMode === 'embed' ? (
+            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-purple-500/30">
+              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+                <iframe 
+                  src="https://shopee.co.th/" 
+                  className="w-full h-full border-0"
+                  title="Shopee Portal"
+                />
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {items.map(prod => (
+                <div key={prod.id} className="glass-panel p-5 rounded-2xl flex flex-col justify-between space-y-3 border border-white/10 hover:border-purple-500/50 transition">
+                  <div>
+                    <h4 className="font-bold text-sm text-white">{prod.name}</h4>
+                    <p className="text-[11px] text-purple-400 mt-1">{prod.desc}</p>
+                  </div>
+                  <div>
+                    <p className="font-extrabold text-white text-base mb-2">{prod.price.toLocaleString()} ฿</p>
+                    <button onClick={() => { addToCart(prod); alert('หยอดสินค้าใส่ตะกร้า Shopee เรียบร้อยแล้ว!'); }} className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs">
+                      สั่งซื้อทันที
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
 
     function BillView() {
+      const [portal, setPortal] = useState('mea');
       const [paid, setPaid] = useState(false);
+
+      const portalUrls = {
+        mea: { name: 'การไฟฟ้านครหลวง (MEA e-Service)', url: 'https://eservice.mea.or.th/' },
+        pea: { name: 'การไฟฟ้าส่วนภูมิภาค (PEA e-Service)', url: 'https://eservice.pea.co.th/' },
+        mwa: { name: 'การประปานครหลวง (MWA e-Service)', url: 'https://eservice.mwa.co.th/' },
+      };
+
       return (
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-emerald-500/30">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="credit-card" className="w-5 h-5 text-emerald-400"></i> ศูนย์ชำระบิลออนไลน์ (One Stop Pay)
-            </h2>
-            <p className="text-xs text-gray-300 mt-1">ชำระบิลค่าน้ำ ค่าไฟ อินเทอร์เน็ต ไม่มีค่าธรรมเนียม</p>
-          </div>
-
-          <div className="glass-panel p-6 rounded-2xl max-w-lg mx-auto space-y-4">
-            <h3 className="font-bold text-sm text-white">บิลค่าไฟฟ้าประจำเดือน กรกฎาคม 2026</h3>
-            <div className="space-y-2 text-xs text-gray-300 border-t border-white/10 pt-3">
-              <div className="flex justify-between"><span>ผู้ใช้บริการ:</span><span className="text-white font-bold">คุณนรเศรษฐ์</span></div>
-              <div className="flex justify-between"><span>ปริมาณไฟฟ้า:</span><span>412 หน่วย (kWh)</span></div>
-              <div className="flex justify-between border-t border-white/10 pt-2 font-bold text-sm text-emerald-400"><span>ยอดเงินสุทธิ:</span><span>1,820.00 ฿</span></div>
+          <div className="glass-panel p-6 rounded-3xl border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
+                <i data-lucide="credit-card" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลจ่ายค่าไฟ & ค่าน้ำในแอป
+              </span>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                ศูนย์ชำระบิลค่าไฟฟ้า & ค่าน้ำประปา (MEA / PEA / MWA)
+              </h2>
+              <p className="text-xs text-gray-300 mt-1">ชำระค่าไฟตรงกับการไฟฟ้า หรือสแกน QR PromptPay ฟรีค่าธรรมเนียม</p>
             </div>
 
-            {!paid ? (
-              <button onClick={() => setPaid(true)} className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs">
-                สแกน QR PromptPay ชำระเงิน (1,820.00 ฿)
-              </button>
-            ) : (
-              <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-center font-bold text-xs">
-                ✓ ชำระเงินเรียบร้อยแล้ว ออกใบเสร็จรับเงินสำเร็จ
-              </div>
-            )}
+            <div className="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10 overflow-x-auto max-w-full">
+              {[
+                { id: 'mea', label: 'การไฟฟ้า MEA' },
+                { id: 'pea', label: 'การไฟฟ้า PEA' },
+                { id: 'mwa', label: 'การประปา MWA' },
+                { id: 'qr', label: 'QR PromptPay' },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setPortal(item.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                    portal === item.id ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {portal !== 'qr' && (
+            <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="text-gray-400">{portalUrls[portal]?.url}</span>
+              </div>
+              <a 
+                href={portalUrls[portal]?.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
+              >
+                <span>เปิดพอร์ทัลเต็มจอ</span>
+                <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          )}
+
+          {portal !== 'qr' ? (
+            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-emerald-500/30">
+              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+                <iframe 
+                  src={portalUrls[portal]?.url} 
+                  className="w-full h-full border-0"
+                  title={portalUrls[portal]?.name}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="glass-panel p-6 rounded-2xl max-w-lg mx-auto space-y-4 border-emerald-500/30">
+              <h3 className="font-bold text-sm text-white">บิลค่าไฟฟ้าประจำเดือน กรกฎาคม 2026</h3>
+              <div className="space-y-2 text-xs text-gray-300 border-t border-white/10 pt-3">
+                <div className="flex justify-between"><span>ผู้ใช้บริการ:</span><span className="text-white font-bold">คุณนรเศรษฐ์</span></div>
+                <div className="flex justify-between"><span>การไฟฟ้า:</span><span>การไฟฟ้านครหลวง (MEA)</span></div>
+                <div className="flex justify-between"><span>ปริมาณไฟฟ้า:</span><span>412 หน่วย (kWh)</span></div>
+                <div className="flex justify-between border-t border-white/10 pt-2 font-bold text-sm text-emerald-400"><span>ยอดเงินสุทธิ:</span><span>1,820.00 ฿</span></div>
+              </div>
+
+              {!paid ? (
+                <button onClick={() => setPaid(true)} className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white font-bold text-xs shadow-lg">
+                  สแกน QR PromptPay ชำระเงินค่าไฟ (1,820.00 ฿)
+                </button>
+              ) : (
+                <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-center font-bold text-xs">
+                  ✓ ชำระเงินค่าไฟฟ้าเรียบร้อยแล้ว ออกใบเสร็จรับเงินสำเร็จ
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     }

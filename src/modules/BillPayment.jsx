@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
 import { 
   CreditCard, Zap, Droplet, Wifi, QrCode, CheckCircle, 
-  Search, ArrowRight, Download, BarChart2, Calendar, ShieldCheck
+  Search, ArrowRight, Download, BarChart2, Calendar, ShieldCheck, Globe
 } from 'lucide-react';
 
 export default function BillPayment() {
   const [selectedBillType, setSelectedBillType] = useState('electricity');
+  const [portal, setPortal] = useState('mea'); // 'mea', 'pea', 'mwa', 'app'
   const [accountNumber, setAccountNumber] = useState('020008891234');
   const [billData, setBillData] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [paymentDone, setPaymentDone] = useState(false);
+
+  const portalUrls = {
+    mea: { name: 'การไฟฟ้านครหลวง (MEA e-Service)', url: 'https://eservice.mea.or.th/' },
+    pea: { name: 'การไฟฟ้าส่วนภูมิภาค (PEA e-Service)', url: 'https://eservice.pea.co.th/' },
+    mwa: { name: 'การประปานครหลวง (MWA e-Service)', url: 'https://eservice.mwa.co.th/' },
+  };
 
   const billTypes = [
     { id: 'electricity', name: 'ค่าไฟฟ้า (MEA/PEA)', icon: Zap, color: 'text-amber-400', border: 'border-amber-500' },
@@ -21,7 +28,7 @@ export default function BillPayment() {
     if (selectedBillType === 'electricity') {
       setBillData({
         title: 'การไฟฟ้านครหลวง (MEA)',
-        accName: 'คุณสมชาย ใจดี',
+        accName: 'คุณนรเศรษฐ์',
         period: 'กรกฎาคม 2026',
         units: '412 หน่วย (kWh)',
         baseAmount: 1700.00,
@@ -40,7 +47,7 @@ export default function BillPayment() {
     } else if (selectedBillType === 'water') {
       setBillData({
         title: 'การประปานครหลวง (MWA)',
-        accName: 'คุณสมชาย ใจดี',
+        accName: 'คุณนรเศรษฐ์',
         period: 'กรกฎาคม 2026',
         units: '22 ลูกบาศก์เมตร',
         baseAmount: 317.75,
@@ -59,7 +66,7 @@ export default function BillPayment() {
     } else {
       setBillData({
         title: 'AIS Fibre 1000/500 Mbps',
-        accName: 'คุณสมชาย ใจดี',
+        accName: 'คุณนรเศรษฐ์',
         period: 'กรกฎาคม 2026',
         units: 'ความเร็วสูงสุด 1 Gbps',
         baseAmount: 599.00,
@@ -89,18 +96,68 @@ export default function BillPayment() {
     <div className="space-y-6 animate-fade-in">
       
       {/* Title Banner */}
-      <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border-emerald-500/30 flex items-center justify-between">
+      <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
-            <CreditCard className="w-3.5 h-3.5" /> ชำระบิลออนไลน์
+            <CreditCard className="w-3.5 h-3.5" /> ฝังพอร์ทัลจ่ายค่าไฟ & ค่าน้ำในแอป
           </div>
-          <h2 className="text-2xl font-bold text-white">OmniPay - ศูนย์ชำระบิลค่าน้ำ-ค่าไฟ</h2>
-          <p className="text-xs text-gray-300">ค้นหายอดชำระอัตโนมัติ สแกนจ่ายผ่าน QR Code ไม่มีค่าธรรมเนียม</p>
+          <h2 className="text-2xl font-bold text-white">ศูนย์ชำระบิลค่าไฟฟ้า & ค่าน้ำประปา (MEA / PEA / MWA)</h2>
+          <p className="text-xs text-gray-300">ชำระค่าไฟตรงกับการไฟฟ้า หรือสแกน QR PromptPay ฟรีค่าธรรมเนียม</p>
+        </div>
+
+        {/* Portal Switcher Tabs */}
+        <div className="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10 overflow-x-auto max-w-full">
+          {[
+            { id: 'mea', label: 'การไฟฟ้า MEA' },
+            { id: 'pea', label: 'การไฟฟ้า PEA' },
+            { id: 'mwa', label: 'การประปา MWA' },
+            { id: 'app', label: 'QR PromptPay ในแอป' },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => setPortal(item.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                portal === item.id ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Bill Selector Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {portal !== 'app' ? (
+        <div className="space-y-4">
+          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span className="text-gray-400">{portalUrls[portal]?.url}</span>
+            </div>
+            <a 
+              href={portalUrls[portal]?.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
+            >
+              <span>เปิดพอร์ทัลเต็มจอ</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          <div className="glass-panel p-4 rounded-3xl overflow-hidden border-emerald-500/30">
+            <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+              <iframe 
+                src={portalUrls[portal]?.url} 
+                className="w-full h-full border-0"
+                title={portalUrls[portal]?.name}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Bill Selector Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {billTypes.map((type) => {
           const Icon = type.icon;
           const isSelected = selectedBillType === type.id;
@@ -271,6 +328,8 @@ export default function BillPayment() {
             </button>
           </div>
         </div>
+      )}
+      </>
       )}
 
     </div>

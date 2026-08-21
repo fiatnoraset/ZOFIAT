@@ -78,47 +78,38 @@ export default function Dashboard({ setActiveTab, smartHomeDevices, toggleDevice
           
           {/* 1. Ride */}
           <div 
-            onClick={() => {
-              window.open('https://www.grab.com/th/transport/', '_blank');
-              setActiveTab('ride');
-            }}
+            onClick={() => setActiveTab('ride')}
             className="glass-panel p-5 cursor-pointer hover:scale-[1.02] border hover:border-cyan-500/50 transition group"
           >
             <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-3 group-hover:scale-110 transition-transform">
               <Car className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-sm text-white group-hover:text-cyan-300">เรียกรถรับ-ส่ง</h4>
-            <p className="text-xs text-gray-400 mt-1">Grab Transport ไปรับ-ส่งทุกที่</p>
+            <h4 className="font-bold text-sm text-white group-hover:text-cyan-300">เรียกรถรับ-ส่ง (GrabCar)</h4>
+            <p className="text-xs text-gray-400 mt-1">ฝังพอร์ทัล Grab Transport ในแอป</p>
           </div>
 
           {/* 2. Food */}
           <div 
-            onClick={() => {
-              window.open('https://www.grab.com/th/food/', '_blank');
-              setActiveTab('food');
-            }}
+            onClick={() => setActiveTab('food')}
             className="glass-panel p-5 cursor-pointer hover:scale-[1.02] border hover:border-orange-500/50 transition group"
           >
             <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 mb-3 group-hover:scale-110 transition-transform">
               <UtensilsCrossed className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-sm text-white group-hover:text-orange-300">สั่งซื้ออาหาร</h4>
-            <p className="text-xs text-gray-400 mt-1">GrabFood สั่งอาหารส่งตรงถึงบ้านคุณ</p>
+            <h4 className="font-bold text-sm text-white group-hover:text-orange-300">สั่งซื้ออาหาร (GrabFood)</h4>
+            <p className="text-xs text-gray-400 mt-1">ฝังพอร์ทัล GrabFood สั่งอาหารในแอป</p>
           </div>
 
           {/* 3. Mall */}
           <div 
-            onClick={() => {
-              window.open('https://shopee.co.th/', '_blank');
-              setActiveTab('mall');
-            }}
+            onClick={() => setActiveTab('mall')}
             className="glass-panel p-5 cursor-pointer hover:scale-[1.02] border hover:border-purple-500/50 transition group"
           >
             <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-3 group-hover:scale-110 transition-transform">
               <ShoppingBag className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-sm text-white group-hover:text-purple-300">สั่งสินค้าออนไลน์</h4>
-            <p className="text-xs text-gray-400 mt-1">Shopee เลือกซื้อสินค้าออนไลน์ครบครัน</p>
+            <h4 className="font-bold text-sm text-white group-hover:text-purple-300">สั่งสินค้าออนไลน์ (Shopee)</h4>
+            <p className="text-xs text-gray-400 mt-1">ฝังพอร์ทัล Shopee ช้อปปิ้งออนไลน์ในแอป</p>
           </div>
 
           {/* 4. Bill Pay */}
@@ -129,8 +120,8 @@ export default function Dashboard({ setActiveTab, smartHomeDevices, toggleDevice
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-3 group-hover:scale-110 transition-transform">
               <CreditCard className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-sm text-white group-hover:text-emerald-300">จ่ายบิลค่าน้ำ-ค่าไฟ</h4>
-            <p className="text-xs text-gray-400 mt-1">เช็กยอด ชำระผ่าน QR สแกนง่าย ไม่มีค่าธรรมเนียม</p>
+            <h4 className="font-bold text-sm text-white group-hover:text-emerald-300">จ่ายค่าไฟ/น้ำ (MEA & PEA)</h4>
+            <p className="text-xs text-gray-400 mt-1">ฝังพอร์ทัล e-Service จ่ายบิลค่าไฟตรง</p>
           </div>
 
           {/* 5. Emergency SOS */}

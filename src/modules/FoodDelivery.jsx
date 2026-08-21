@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   UtensilsCrossed, Search, Star, Clock, ShoppingBag, Plus, Minus, 
-  Check, ArrowRight, Filter, Flame
+  Check, ArrowRight, Filter, Flame, Globe
 } from 'lucide-react';
 
 export default function FoodDelivery({ cart, addToCart, removeFromCart, clearCart }) {
@@ -9,6 +9,7 @@ export default function FoodDelivery({ cart, addToCart, removeFromCart, clearCar
   const [searchQuery, setSearchQuery] = useState('');
   const [activeRestaurant, setActiveRestaurant] = useState(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [viewMode, setViewMode] = useState('app');
 
   const categories = [
     { id: 'all', name: 'ทั้งหมด' },
@@ -96,37 +97,61 @@ export default function FoodDelivery({ cart, addToCart, removeFromCart, clearCar
       <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-orange-950/60 to-slate-900 border-orange-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-xs font-semibold mb-2">
-            <UtensilsCrossed className="w-3.5 h-3.5" /> สั่งซื้ออาหาร
+            <UtensilsCrossed className="w-3.5 h-3.5" /> ฝังพอร์ทัลบริการในแอป (In-App GrabFood)
           </div>
           <h2 className="text-2xl font-bold text-white">สั่งซื้ออาหาร (GrabFood)</h2>
           <p className="text-xs text-gray-300">คัดสรรร้านอร่อยส่งตรงถึงหน้าบ้านคุณ รวดเร็ว สะอาด ปลอดภัย</p>
         </div>
 
+        <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10">
+          <button 
+            onClick={() => setViewMode('app')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${viewMode === 'app' ? 'bg-orange-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}
+          >
+            เมนูแนะนำ
+          </button>
+          <button 
+            onClick={() => setViewMode('embed')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-orange-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Globe className="w-3.5 h-3.5" /> พอร์ทัลเว็บ GrabFood
+          </button>
+        </div>
+      </div>
+
+      {/* In-App Browser Toolbar */}
+      <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+          <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+          <span className="text-gray-400">https://www.grab.com/th/food/</span>
+        </div>
         <a 
           href="https://www.grab.com/th/food/" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform shrink-0"
+          className="px-3.5 py-2 rounded-xl bg-orange-600/30 hover:bg-orange-600/50 text-orange-300 border border-orange-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
         >
-          <span>เปิดใช้งาน GrabFood</span>
-          <ArrowRight className="w-4 h-4" />
+          <span>เปิดเต็มจอ</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </a>
-
-        {/* Search Input */}
-        <div className="w-full md:w-72 relative">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
-          <input 
-            type="text" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="ค้นหาร้านค้า หรือเมนู..." 
-            className="glass-input pl-10 text-xs"
-          />
-        </div>
       </div>
 
-      {/* Category Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {viewMode === 'embed' ? (
+        <div className="glass-panel p-4 rounded-3xl overflow-hidden border-orange-500/30">
+          <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+            <iframe 
+              src="https://www.grab.com/th/food/" 
+              className="w-full h-full border-0"
+              title="GrabFood Portal"
+            />
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Search Input & Category Pills */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
+            {/* Category Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-1">
         {categories.map((c) => (
           <button
             key={c.id}
@@ -312,6 +337,8 @@ export default function FoodDelivery({ cart, addToCart, removeFromCart, clearCar
             </div>
           </div>
         </div>
+      )}
+      </>
       )}
 
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Car, MapPin, Navigation, Clock, ShieldCheck, UserCheck, 
-  Phone, Star, CheckCircle, ArrowRight, RefreshCw, Bike, Shield
+  Phone, Star, CheckCircle, ArrowRight, RefreshCw, Bike, Shield, Globe
 } from 'lucide-react';
 
 export default function RideHailing({ activeRide, setActiveRide }) {
@@ -41,28 +41,65 @@ export default function RideHailing({ activeRide, setActiveRide }) {
     setActiveRide(false);
   };
 
+  const [viewMode, setViewMode] = useState('app'); // 'app' or 'embed'
+
   return (
     <div className="space-y-6 animate-fade-in">
       
       {/* Module Title Banner */}
-      <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-cyan-950/60 to-slate-900 border-cyan-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-cyan-950/60 to-slate-900 border-cyan-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold mb-2">
-            <Car className="w-3.5 h-3.5" /> บริการเรียกรถรับ-ส่ง
+            <Car className="w-3.5 h-3.5" /> ฝังพอร์ทัลบริการในแอป (In-App Grab Transport)
           </div>
-          <h2 className="text-2xl font-bold text-white">เรียกรถเดินทาง (Grab Transport)</h2>
+          <h2 className="text-2xl font-bold text-white">เรียกรถเดินทาง (Grab Transport / GrabCar)</h2>
           <p className="text-xs text-gray-300">บริการรถรับ-ส่ง ปลอดภัย ติดตามเส้นทางแบบเรียลไทม์ 24 ชม.</p>
+        </div>
+
+        <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10">
+          <button 
+            onClick={() => setViewMode('app')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${viewMode === 'app' ? 'bg-cyan-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}
+          >
+            เรียกรถด่วน
+          </button>
+          <button 
+            onClick={() => setViewMode('embed')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-cyan-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Globe className="w-3.5 h-3.5" /> พอร์ทัลเว็บ Grab
+          </button>
+        </div>
+      </div>
+
+      {/* In-App Browser Toolbar */}
+      <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span className="text-gray-400">https://www.grab.com/th/transport/</span>
         </div>
         <a 
           href="https://www.grab.com/th/transport/" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+          className="px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
         >
-          <span>เปิดใช้งาน Grab Transport</span>
-          <ArrowRight className="w-4 h-4" />
+          <span>เปิดเต็มจอ</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </a>
       </div>
+
+      {viewMode === 'embed' ? (
+        <div className="glass-panel p-4 rounded-3xl overflow-hidden border-cyan-500/30">
+          <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+            <iframe 
+              src="https://www.grab.com/th/transport/" 
+              className="w-full h-full border-0"
+              title="Grab Transport Portal"
+            />
+          </div>
+        </div>
+      ) : (
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
@@ -256,6 +293,7 @@ export default function RideHailing({ activeRide, setActiveRide }) {
         </div>
 
       </div>
+      )}
 
     </div>
   );

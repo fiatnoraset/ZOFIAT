@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { 
   ShoppingBag, ShoppingCart, ShieldCheck, Truck, Check, Filter, 
-  Info, Star, CreditCard, ArrowRight
+  Info, Star, CreditCard, ArrowRight, Globe
 } from 'lucide-react';
 
 export default function ApplianceMall({ addToCart }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [viewMode, setViewMode] = useState('app');
 
   const categories = [
     { id: 'all', name: 'ทั้งหมด' },
@@ -77,13 +78,59 @@ export default function ApplianceMall({ addToCart }) {
       <div className="glass-panel p-6 rounded-3xl bg-gradient-to-r from-purple-950/60 to-slate-900 border-purple-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold mb-2">
-        <div className="flex items-center gap-2 text-xs text-purple-300">
-          <Truck className="w-4 h-4 text-purple-400" /> จัดส่งฟรีถึงหน้าบ้านใน 24 ชม.
+            <ShoppingBag className="w-3.5 h-3.5" /> ฝังพอร์ทัลบริการในแอป (In-App Shopee Shopping)
+          </div>
+          <h2 className="text-2xl font-bold text-white">สั่งสินค้าออนไลน์ (Shopee)</h2>
+          <p className="text-xs text-gray-300">เลือกซื้อสินค้าออนไลน์ เครื่องใช้ไฟฟ้า แฟชั่น อุปกรณ์ IT สินค้าครบครันบน Shopee</p>
+        </div>
+
+        <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10">
+          <button 
+            onClick={() => setViewMode('app')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${viewMode === 'app' ? 'bg-purple-600 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}
+          >
+            สินค้าแนะนำ
+          </button>
+          <button 
+            onClick={() => setViewMode('embed')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-purple-600 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Globe className="w-3.5 h-3.5" /> พอร์ทัลเว็บ Shopee
+          </button>
         </div>
       </div>
 
-      {/* Categories */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {/* In-App Browser Toolbar */}
+      <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
+          <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+          <span className="text-gray-400">https://shopee.co.th/</span>
+        </div>
+        <a 
+          href="https://shopee.co.th/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
+        >
+          <span>เปิดเต็มจอ</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </a>
+      </div>
+
+      {viewMode === 'embed' ? (
+        <div className="glass-panel p-4 rounded-3xl overflow-hidden border-purple-500/30">
+          <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
+            <iframe 
+              src="https://shopee.co.th/" 
+              className="w-full h-full border-0"
+              title="Shopee Portal"
+            />
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Categories */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {categories.map((c) => (
           <button
             key={c.id}
@@ -201,6 +248,8 @@ export default function ApplianceMall({ addToCart }) {
             </button>
           </div>
         </div>
+      )}
+      </>
       )}
 
     </div>
