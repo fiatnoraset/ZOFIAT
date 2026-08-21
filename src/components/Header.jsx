@@ -34,7 +34,7 @@ export default function Header({ activeTab, setActiveTab, cartCount, activeRide,
         <div className="flex items-center gap-4">
           <div 
             className="flex items-center gap-3 cursor-pointer group"
-            onClick={() => setActiveTab('dashboard')}
+            onClick={() => setActiveTab && setActiveTab('dashboard')}
           >
             <img 
               src="logo.jpg" 
@@ -64,19 +64,9 @@ export default function Header({ activeTab, setActiveTab, cartCount, activeRide,
             <span className="text-emerald-400 font-medium">ความปลอดภัยสูง</span>
           </div>
 
-          {activeRide && (
-            <div 
-              onClick={() => setActiveTab('ride')}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 cursor-pointer animate-pulse"
-            >
-              <span>🚗 กำลังเรียกรถ...</span>
-            </div>
-          )}
-
           {sosAlertActive && (
             <div 
-              onClick={() => setActiveTab('sos')}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 cursor-pointer animate-pulse"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 animate-pulse"
             >
               <span>🚨 SOS กำลังทำงาน</span>
             </div>
@@ -136,20 +126,6 @@ export default function Header({ activeTab, setActiveTab, cartCount, activeRide,
               </div>
             )}
           </div>
-
-          {/* Cart Icon */}
-          <button 
-            onClick={() => setActiveTab('food')}
-            className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition"
-            title="ตะกร้าสินค้า"
-          >
-            <ShoppingBag className="w-5 h-5 text-orange-400" />
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </button>
 
           {/* User Profile */}
           <div className="flex items-center gap-2.5 pl-2 border-l border-white/10">

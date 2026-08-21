@@ -120,19 +120,55 @@
     const { useState, useEffect, useRef } = React;
 
     function App() {
-      const [activeTab, setActiveTab] = useState('dashboard');
-      const [cart, setCart] = useState([{ id: 101, name: 'ข้าวมันไก่ต้มหนังนุ่ม', price: 65, quantity: 1 }]);
-      const [activeRide, setActiveRide] = useState(false);
-      const [sosAlertActive, setSosAlertActive] = useState(false);
-      const [watchlist, setWatchlist] = useState(['PTT', 'CPALL', 'ADVANC']);
-      const [notifications, setNotifications] = useState([
-        { id: 1, title: 'บิลค่าน้ำประปาครบกำหนดชำระ', detail: 'ยอดชำระ 340.00 บาท', time: '10 นาทีที่แล้ว' },
-        { id: 2, title: 'พนักงานส่งอาหารกำลังจัดส่ง', detail: 'ร้านข้าวมันไก่เฮียเม้ง กำลังเดินทาง', time: '25 นาทีที่แล้ว' }
+      // Smart Home Devices State
+      const [smartDevices, setSmartDevices] = useState([
+        { id: 1, name: 'ไฟดาวน์ไลท์ห้องรับแขก', room: 'Living Room', on: true, icon: 'lightbulb' },
+        { id: 2, name: 'เครื่องปรับอากาศ Inverter', room: 'Bedroom', on: true, icon: 'wind' },
+        { id: 3, name: 'Smart TV 65 นิ้ว', room: 'Living Room', on: false, icon: 'tv' },
+        { id: 4, name: 'ไฟหัวเตียงนอน', room: 'Bedroom', on: false, icon: 'lamp' },
+        { id: 5, name: 'ประตูรั้วอัตโนมัติ', room: 'Garage', on: true, icon: 'door-closed' },
+      ]);
+
+      // Stock Watchlist State
+      const [stocks] = useState([
+        { symbol: 'SET Index', price: '1,385.42', change: '+12.30', pct: '+0.90%', up: true },
+        { symbol: 'PTT', price: '34.50', change: '+0.50', pct: '+1.47%', up: true },
+        { symbol: 'CPALL', price: '58.25', change: '+0.75', pct: '+1.30%', up: true },
+        { symbol: 'ADVANC', price: '215.00', change: '-1.00', pct: '-0.46%', up: false },
+        { symbol: 'DELTA', price: '82.50', change: '+2.00', pct: '+2.48%', up: true },
+      ]);
+
+      // News State
+      const [newsList] = useState([
+        { id: 1, tag: 'เศรษฐกิจ', title: 'แบงก์ชาติประเมินเศรษฐกิจไทยปี 2026 ขยายตัวต่อเนื่อง', time: '15 นาทีที่แล้ว' },
+        { id: 2, tag: 'พลังงาน', title: 'การไฟฟ้าเปิดตัวระบบ e-Service และลดค่าไฟรอบบิลใหม่', time: '1 ชั่วโมงที่แล้ว' },
+        { id: 3, tag: 'เทคโนโลยี', title: 'เปิดตัวเทคโนโลยี AI ผู้ช่วยอัจฉริยะภาษาไทยเต็มรูปแบบ', time: '2 ชั่วโมงที่แล้ว' }
+      ]);
+
+      // SOS Alert State
+      const [sosActive, setSosActive] = useState(false);
+
+      // Bill Payment Modal State
+      const [showBillModal, setShowBillModal] = useState(false);
+      const [billPaid, setBillPaid] = useState(false);
+
+      // AI Chat Assistant Modal State
+      const [showAiModal, setShowAiModal] = useState(false);
+      const [aiInput, setAiInput] = useState('');
+      const [aiMessages, setAiMessages] = useState([
+        { sender: 'ai', text: 'สวัสดีครับ คุณนรเศรษฐ์! ผมคือผู้ช่วย AI ประจำ One Stop Service มีอะไรให้ผมช่วยเหลือวันนี้ครับ?' }
+      ]);
+
+      // Notifications State
+      const [notifications] = useState([
+        { id: 1, title: 'บิลค่าไฟฟ้าครบกำหนดชำระ', detail: 'ยอดชำระ 1,820.00 บาท (MEA)', time: '10 นาทีที่แล้ว' },
+        { id: 2, title: 'ระบบ Smart Home เชื่อมต่อสมบูรณ์', detail: 'อุปกรณ์ 5 ชิ้นออนไลน์พร้อมสั่งการ', time: '30 นาทีที่แล้ว' }
       ]);
       const [showNotif, setShowNotif] = useState(false);
+
+      // PWA Install State
       const [deferredPrompt, setDeferredPrompt] = useState(null);
       const [showInstallModal, setShowInstallModal] = useState(false);
-      // Dynamically detect URL so it works on localhost, LAN IP, and public tunnel (serveo, etc.)
       const localNetworkUrl = window.location.origin;
 
       // Listen for PWA Install Prompt
@@ -144,6 +180,12 @@
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
         return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       }, []);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [smartDevices, sosActive, showBillModal, billPaid, showAiModal, aiMessages, showNotif, showInstallModal]);
 
       const handleInstallPWA = () => {
         if (deferredPrompt) {
@@ -159,55 +201,147 @@
         }
       };
 
-      // Smart Home Devices
-      const [smartDevices, setSmartDevices] = useState([
-        { id: 1, name: 'ไฟดาวน์ไลท์หลัก', room: 'Living Room', on: true, wattage: 18 },
-        { id: 2, name: 'เครื่องปรับอากาศ Inverter', room: 'Living Room', on: true, wattage: 1200 },
-        { id: 3, name: 'Smart TV 65 นิ้ว', room: 'Living Room', on: false, wattage: 150 },
-        { id: 4, name: 'ไฟหัวเตียงนอน', room: 'Bedroom', on: false, wattage: 12 },
-        { id: 5, name: 'ประตูรั้วอัตโนมัติ', room: 'Garage', on: true, wattage: 45 },
-      ]);
-
-      useEffect(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      }, [activeTab, cart, smartDevices, activeRide, sosAlertActive, showInstallModal]);
-
-      const addToCart = (item) => {
-        setCart(prev => {
-          const found = prev.find(i => i.id === item.id);
-          if (found) return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
-          return [...prev, { ...item, quantity: 1 }];
-        });
-      };
-
-      const removeFromCart = (id) => {
-        setCart(prev => prev.map(i => i.id === id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
-      };
-
       const toggleDevice = (id) => {
         setSmartDevices(prev => prev.map(d => d.id === id ? { ...d, on: !d.on } : d));
       };
 
-      const toggleWatchlist = (symbol) => {
-        setWatchlist(prev => prev.includes(symbol) ? prev.filter(s => s !== symbol) : [...prev, symbol]);
+      const handleSendAiMessage = () => {
+        if (!aiInput.trim()) return;
+        const userText = aiInput;
+        setAiMessages(prev => [...prev, { sender: 'user', text: userText }]);
+        setAiInput('');
+
+        setTimeout(() => {
+          let reply = 'ผมได้รับคำถามของคุณนรเศรษฐ์แล้วครับ ยินดีให้บริการและช่วยเหลือทุกเรื่องในชีวิตประจำวันครับ!';
+          if (userText.includes('ค่าไฟ') || userText.includes('บิล')) {
+            reply = 'บิลค่าไฟฟ้าประจำเดือนนี้ของคุณนรเศรษฐ์ คือ 1,820.00 ฿ (การไฟฟ้านครหลวง MEA) คุณสามารถกดสแกน QR PromptPay ชำระได้ทันทีบนหน้าหลักครับ';
+          } else if (userText.includes('รถ') || userText.includes('grab')) {
+            reply = 'คุณสามารถกดเมนู "เรียกรถ (GrabCar)" บนหน้าหลักเพื่อเปิดใช้งาน Grab Transport ได้ทันทีครับ';
+          } else if (userText.includes('อาหาร')) {
+            reply = 'คุณสามารถกดเมนู "สั่งอาหาร (GrabFood)" บนหน้าหลักเพื่อค้นหาร้านอร่อยส่งตรงถึงบ้านได้เลยครับ';
+          } else if (userText.includes('ช้อป') || userText.includes('ซื้อ')) {
+            reply = 'คุณสามารถกดเมนู "สั่งสินค้าออนไลน์ (Shopee)" เพื่อเลือกซื้อสินค้าโปรโมชันและผ่อน 0% บน Shopee ได้ทันทีครับ';
+          }
+          setAiMessages(prev => [...prev, { sender: 'ai', text: reply }]);
+        }, 600);
       };
 
-      const totalCartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+      // 9 Main Menu Items on Dashboard
+      const menuCards = [
+        { 
+          id: 'ride', 
+          title: 'เรียกรถรับ-ส่ง (GrabCar)', 
+          desc: 'เปิดบริการ Grab Transport ทันที', 
+          icon: 'car', 
+          color: 'text-cyan-400', 
+          border: 'hover:border-cyan-500', 
+          bg: 'bg-cyan-500/10',
+          onClick: () => window.open('https://www.grab.com/th/transport/', '_blank') 
+        },
+        { 
+          id: 'food', 
+          title: 'สั่งซื้ออาหาร (GrabFood)', 
+          desc: 'สั่งอาหารร้านดังส่งถึงบ้านบน GrabFood', 
+          icon: 'utensils-crossed', 
+          color: 'text-orange-400', 
+          border: 'hover:border-orange-500', 
+          bg: 'bg-orange-500/10',
+          onClick: () => window.open('https://www.grab.com/th/food/', '_blank') 
+        },
+        { 
+          id: 'mall', 
+          title: 'สั่งสินค้าออนไลน์ (Shopee)', 
+          desc: 'ช้อปปิ้งสินค้าออนไลน์ครบครันบน Shopee', 
+          icon: 'shopping-bag', 
+          color: 'text-purple-400', 
+          border: 'hover:border-purple-500', 
+          bg: 'bg-purple-500/10',
+          onClick: () => window.open('https://shopee.co.th/', '_blank') 
+        },
+        { 
+          id: 'bill', 
+          title: 'จ่ายค่าไฟ/น้ำ (MEA & PEA)', 
+          desc: 'ชำระบิลค่าไฟ 1,820฿ ผ่าน QR PromptPay', 
+          icon: 'credit-card', 
+          color: 'text-emerald-400', 
+          border: 'hover:border-emerald-500', 
+          bg: 'bg-emerald-500/10',
+          onClick: () => setShowBillModal(true) 
+        },
+        { 
+          id: 'sos', 
+          title: 'แจ้งเหตุด่วน SOS', 
+          desc: 'ส่งสัญญาณฉุกเฉิน & โทร 191 / 1669', 
+          icon: 'alert-triangle', 
+          color: 'text-rose-500', 
+          border: 'border-rose-500/40 bg-rose-950/20 hover:border-rose-500', 
+          bg: 'bg-rose-500/10',
+          onClick: () => setSosActive(true) 
+        },
+        { 
+          id: 'home', 
+          title: 'สั่งเปิด-ปิดบ้าน IoT', 
+          desc: 'ควบคุมสวิตช์ไฟ แอร์ อุปกรณ์ในบ้าน', 
+          icon: 'home', 
+          color: 'text-pink-400', 
+          border: 'hover:border-pink-500', 
+          bg: 'bg-pink-500/10',
+          onClick: () => {
+            const el = document.getElementById('smarthome-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          } 
+        },
+        { 
+          id: 'ai', 
+          title: 'ผู้ช่วย AI ปรึกษา', 
+          desc: 'ถาม-ตอบข้อสงสัยตลอด 24 ชม.', 
+          icon: 'bot', 
+          color: 'text-violet-400', 
+          border: 'hover:border-violet-500', 
+          bg: 'bg-violet-500/10',
+          onClick: () => setShowAiModal(true) 
+        },
+        { 
+          id: 'stocks', 
+          title: 'ตลาดหุ้น SET', 
+          desc: 'ดูราคาหุ้น กราฟ และสรุปตลาด SET', 
+          icon: 'trending-up', 
+          color: 'text-teal-400', 
+          border: 'hover:border-teal-500', 
+          bg: 'bg-teal-500/10',
+          onClick: () => {
+            const el = document.getElementById('stocks-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          } 
+        },
+        { 
+          id: 'news', 
+          title: 'ข่าวสารบ้านเมือง', 
+          desc: 'อัปเดตข่าวเศรษฐกิจ การเมือง สังคม', 
+          icon: 'newspaper', 
+          color: 'text-blue-400', 
+          border: 'hover:border-blue-500', 
+          bg: 'bg-blue-500/10',
+          onClick: () => {
+            const el = document.getElementById('news-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          } 
+        },
+      ];
 
       return (
         <div className="min-h-screen flex flex-col justify-between">
           
-          {/* Header Bar */}
+          {/* Top Header Bar */}
           <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10 px-4 lg:px-8 py-3 mb-6">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               
-              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-                <img src="logo.jpg" alt="One Stop Service Logo" className="w-10 h-10 rounded-xl object-cover border border-emerald-400/40 shadow-lg hover:scale-105 transition-transform" />
+              {/* App Brand */}
+              <div className="flex items-center gap-3">
+                <img src="logo.jpg" alt="One Stop Service Logo" className="w-10 h-10 rounded-xl object-cover border border-emerald-400/40 shadow-lg" />
                 <div>
                   <h1 className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-teal-200 to-emerald-400 bg-clip-text text-transparent">
-                    One Stop Service <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">PWA 9-in-1</span>
+                    One Stop Service <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Super App 9-in-1</span>
                   </h1>
                   <p className="text-xs text-gray-400 flex items-center gap-1">
                     <i data-lucide="map-pin" className="w-3 h-3 text-emerald-400"></i> กรุงเทพมหานคร, ไทย
@@ -217,17 +351,17 @@
 
               {/* Header Right Actions */}
               <div className="flex items-center gap-2 sm:gap-3">
-
-                {/* Install PWA Button */}
+                
+                {/* PWA Install Button */}
                 <button 
                   onClick={handleInstallPWA}
                   className="px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 transition-transform"
-                  title="ติดตั้งเป็นแอปมือถือ / PWA"
                 >
                   <i data-lucide="download" className="w-4 h-4"></i>
                   <span className="hidden sm:inline">ติดตั้งแอป PWA</span>
                 </button>
 
+                {/* Notifications Bell */}
                 <div className="relative">
                   <button 
                     onClick={() => setShowNotif(!showNotif)}
@@ -249,6 +383,7 @@
                           <div key={n.id} className="p-2.5 rounded-xl bg-white/5 text-xs">
                             <p className="font-bold text-white">{n.title}</p>
                             <p className="text-gray-300 text-[11px]">{n.detail}</p>
+                            <span className="text-[10px] text-gray-400">{n.time}</span>
                           </div>
                         ))}
                       </div>
@@ -256,110 +391,367 @@
                   )}
                 </div>
 
-                <button 
-                  onClick={() => setActiveTab('food')}
-                  className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-orange-400 relative"
-                >
-                  <i data-lucide="shopping-bag" className="w-5 h-5"></i>
-                  {totalCartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center">
-                      {totalCartCount}
-                    </span>
-                  )}
-                </button>
-
+                {/* User Profile */}
                 <div className="flex items-center gap-2 pl-2 border-l border-white/10">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow-md border border-white/20">
                     <i data-lucide="user" className="w-5 h-5"></i>
                   </div>
                   <span className="hidden sm:inline text-xs font-bold text-white">คุณนรเศรษฐ์</span>
                 </div>
+
               </div>
 
             </div>
           </header>
 
-          {/* Navigation Bar */}
-          <nav className="max-w-7xl mx-auto px-4 lg:px-8 w-full mb-6">
-            <div className="glass-panel p-2 rounded-2xl flex items-center gap-2 overflow-x-auto">
-              {[
-                { id: 'dashboard', label: 'หน้าหลัก', icon: 'layout-dashboard', color: 'text-indigo-400' },
-                { id: 'ride', label: 'เรียกรถ (GrabCar)', icon: 'car', color: 'text-cyan-400' },
-                { id: 'food', label: 'สั่งอาหาร (GrabFood)', icon: 'utensils-crossed', color: 'text-orange-400' },
-                { id: 'mall', label: 'สั่งสินค้าออนไลน์ (Shopee)', icon: 'shopping-bag', color: 'text-purple-400' },
-                { id: 'bill', label: 'จ่ายบิลค่าไฟ/น้ำ', icon: 'credit-card', color: 'text-emerald-400' },
-                { id: 'sos', label: 'เหตุด่วน SOS', icon: 'alert-triangle', color: 'text-rose-500', hot: true },
-                { id: 'home', label: 'ควบคุมบ้าน', icon: 'home', color: 'text-pink-400' },
-                { id: 'ai', label: 'ผู้ช่วย AI', icon: 'bot', color: 'text-violet-400', badge: 'AI' },
-                { id: 'stocks', label: 'ตลาดหุ้น', icon: 'trending-up', color: 'text-teal-400' },
-                { id: 'news', label: 'ข่าวสารบ้านเมือง', icon: 'newspaper', color: 'text-blue-400' },
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition ${
-                    activeTab === item.id ? 'bg-white/15 text-white font-bold border border-white/20' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
+          {/* Main Dashboard Single Page */}
+          <main className="max-w-7xl mx-auto px-4 lg:px-8 w-full space-y-6">
+            
+            {/* Hero Welcome Banner */}
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-emerald-950/80 via-teal-950/60 to-slate-900 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
+                  <i data-lucide="sparkles" className="w-3.5 h-3.5"></i> ยินดีต้อนรับ คุณนรเศรษฐ์ (พร้อมใช้งานทุกอุปกรณ์)
+                </span>
+                <h2 className="text-2xl lg:text-3xl font-extrabold text-white">
+                  ศูนย์รวมความสะดวกสบาย<span className="text-gradient-purple"> ประจำวันของคุณ (9-in-1)</span>
+                </h2>
+                <p className="text-xs text-gray-300 mt-1 max-w-xl">
+                  จัดการทุกบริการได้ครบจบในหน้าเดียว ทั้งเรียกรถ สั่งอาหาร สั่งสินค้าออนไลน์ จ่ายบิลค่าไฟ แจ้งเหตุฉุกเฉิน ควบคุมบ้าน และปรึกษา AI
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowAiModal(true)}
+                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform shrink-0"
                 >
-                  <i data-lucide={item.icon} className={`w-4 h-4 ${item.color}`}></i>
-                  <span>{item.label}</span>
-                  {item.hot && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold">HOT</span>}
+                  <i data-lucide="bot" className="w-4 h-4"></i> ปรึกษาผู้ช่วย AI
                 </button>
-              ))}
+              </div>
             </div>
-          </nav>
 
-          {/* Main Content Modules Container */}
-          <main className="max-w-7xl mx-auto px-4 lg:px-8 w-full">
-            {activeTab === 'dashboard' && (
-              <DashboardView 
-                setActiveTab={setActiveTab} 
-                smartDevices={smartDevices}
-                toggleDevice={toggleDevice}
-                triggerSos={() => { setSosAlertActive(true); setActiveTab('sos'); }}
-                handleInstallPWA={handleInstallPWA}
-                localNetworkUrl={localNetworkUrl}
-              />
-            )}
+            {/* Breaking News & Stock Ticker Bar */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div 
+                onClick={() => {
+                  const el = document.getElementById('news-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }} 
+                className="glass-panel p-3.5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-blue-500 transition"
+              >
+                <span className="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-400 font-bold text-xs shrink-0">ข่าวด่วน</span>
+                <p className="text-xs text-gray-200 truncate flex-1 px-3">แบงก์ชาติปรับประมาณการเศรษฐกิจไทยปี 2026 เติบโตแกร่งขึ้น</p>
+                <i data-lucide="arrow-right" className="w-4 h-4 text-gray-400 shrink-0"></i>
+              </div>
 
-            {activeTab === 'ride' && (
-              <RideView activeRide={activeRide} setActiveRide={setActiveRide} />
-            )}
+              <div 
+                onClick={() => {
+                  const el = document.getElementById('stocks-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }} 
+                className="glass-panel p-3.5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-500 transition"
+              >
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold text-xs shrink-0">SET Index</span>
+                <p className="text-xs text-white font-bold flex-1 px-3">1,385.42 <span className="text-emerald-400 font-medium pl-2">+12.30 (+0.90%)</span></p>
+                <i data-lucide="arrow-right" className="w-4 h-4 text-gray-400 shrink-0"></i>
+              </div>
+            </div>
 
-            {activeTab === 'food' && (
-              <FoodView cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} clearCart={() => setCart([])} />
-            )}
+            {/* 9 Main Convenience Hub Cards Grid */}
+            <div>
+              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="zap" className="w-4 h-4 text-emerald-400"></i> บริการหลักในหน้าหลัก (9-in-1 Convenience Hub)
+              </h3>
 
-            {activeTab === 'mall' && (
-              <MallView addToCart={addToCart} />
-            )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+                {menuCards.map(card => (
+                  <div 
+                    key={card.id} 
+                    onClick={card.onClick}
+                    className={`glass-panel p-5 rounded-2xl cursor-pointer hover:scale-[1.02] transition border ${card.border}`}
+                  >
+                    <div className={`w-12 h-12 rounded-2xl ${card.bg} flex items-center justify-center mb-3 ${card.color}`}>
+                      <i data-lucide={card.icon} className="w-6 h-6"></i>
+                    </div>
+                    <h4 className="font-bold text-sm text-white">{card.title}</h4>
+                    <p className="text-xs text-gray-400 mt-1">{card.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            {activeTab === 'bill' && (
-              <BillView />
-            )}
+            {/* Live Interactive Widgets Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              {/* Widget 1: Smart Home Controller */}
+              <div id="smarthome-section" className="glass-panel p-5 rounded-2xl space-y-3">
+                <h4 className="font-bold text-sm text-white flex items-center justify-between">
+                  <span className="flex items-center gap-2"><i data-lucide="home" className="w-4 h-4 text-pink-400"></i> ควบคุมบ้าน Smart Home</span>
+                  <span className="text-[10px] text-pink-400 font-medium">5 อุปกรณ์</span>
+                </h4>
+                <div className="space-y-2">
+                  {smartDevices.map(dev => (
+                    <div key={dev.id} className="glass-card p-3 rounded-xl flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-white font-medium">{dev.name}</p>
+                        <p className="text-[10px] text-gray-400">{dev.room}</p>
+                      </div>
+                      <button 
+                        onClick={() => toggleDevice(dev.id)}
+                        className={`w-11 h-6 rounded-full p-0.5 flex items-center transition-colors ${dev.on ? 'bg-pink-500 justify-end' : 'bg-gray-700 justify-start'}`}
+                      >
+                        <span className="w-5 h-5 rounded-full bg-white shadow-md"></span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            {activeTab === 'sos' && (
-              <SosView sosAlertActive={sosAlertActive} triggerSos={() => setSosAlertActive(true)} cancelSos={() => setSosAlertActive(false)} />
-            )}
+              {/* Widget 2: Bill Payment & Electricity */}
+              <div className="glass-panel p-5 rounded-2xl space-y-3 border-emerald-500/30 flex flex-col justify-between">
+                <div>
+                  <h4 className="font-bold text-sm text-white flex items-center justify-between">
+                    <span className="flex items-center gap-2"><i data-lucide="credit-card" className="w-4 h-4 text-emerald-400"></i> บิลรอชำระเดือนนี้</span>
+                    <span className="badge badge-green text-[10px]">MEA / MWA</span>
+                  </h4>
+                  
+                  <div className="space-y-2 mt-3 text-xs">
+                    <div className="glass-card p-3 rounded-xl flex justify-between items-center">
+                      <div>
+                        <p className="font-bold text-white">ค่าน้ำประปา (MWA)</p>
+                        <p className="text-[10px] text-gray-400">ครบกำหนด 5 ส.ค.</p>
+                      </div>
+                      <span className="font-bold text-amber-400">340.00 ฿</span>
+                    </div>
 
-            {activeTab === 'home' && (
-              <HomeView devices={smartDevices} toggleDevice={toggleDevice} />
-            )}
+                    <div className="glass-card p-3 rounded-xl flex justify-between items-center border border-emerald-500/30">
+                      <div>
+                        <p className="font-bold text-white">ค่าไฟฟ้า (MEA e-Service)</p>
+                        <p className="text-[10px] text-emerald-400">ผู้ใช้: คุณนรเศรษฐ์ (412 kWh)</p>
+                      </div>
+                      <span className="font-bold text-emerald-400 text-sm">1,820.00 ฿</span>
+                    </div>
+                  </div>
+                </div>
 
-            {activeTab === 'ai' && (
-              <AiView setActiveTab={setActiveTab} />
-            )}
+                <div className="pt-2 space-y-2">
+                  <button 
+                    onClick={() => setShowBillModal(true)}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs shadow-md hover:brightness-110 flex items-center justify-center gap-2"
+                  >
+                    <i data-lucide="qr-code" className="w-4 h-4"></i> สแกน QR จ่ายค่าไฟทันที
+                  </button>
+                  <div className="flex gap-2">
+                    <a 
+                      href="https://eservice.mea.or.th/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex-1 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-center text-[10px] text-gray-300 font-medium"
+                    >
+                      การไฟฟ้า MEA ↗
+                    </a>
+                    <a 
+                      href="https://eservice.pea.co.th/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex-1 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-center text-[10px] text-gray-300 font-medium"
+                    >
+                      การไฟฟ้า PEA ↗
+                    </a>
+                  </div>
+                </div>
+              </div>
 
-            {activeTab === 'stocks' && (
-              <StocksView watchlist={watchlist} toggleWatchlist={toggleWatchlist} />
-            )}
+              {/* Widget 3: Emergency SOS */}
+              <div className="glass-panel p-5 rounded-2xl border-rose-500/40 bg-rose-950/20 flex flex-col justify-between">
+                <div>
+                  <h4 className="font-bold text-sm text-rose-400 flex items-center justify-between">
+                    <span className="flex items-center gap-2"><i data-lucide="alert-triangle" className="w-4 h-4"></i> ความปลอดภัยฉุกเฉิน SOS</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-rose-500/30 text-rose-200 font-bold animate-pulse">24 ชม.</span>
+                  </h4>
+                  <p className="text-xs text-gray-300 mt-2">กดปุ่มเพื่อส่งสัญญาณพิกัด GPS อัตโนมัติไปยังศูนย์ช่วยเหลือ</p>
 
-            {activeTab === 'news' && (
-              <NewsView />
-            )}
+                  <div className="py-4 text-center">
+                    {!sosActive ? (
+                      <button 
+                        onClick={() => setSosActive(true)}
+                        className="w-24 h-24 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-lg shadow-2xl mx-auto flex items-center justify-center pulse-sos transition"
+                      >
+                        กด SOS
+                      </button>
+                    ) : (
+                      <div className="p-3 rounded-xl bg-rose-600/40 border border-rose-400 text-white space-y-2">
+                        <p className="font-bold text-xs">✓ ส่งสัญญาณ SOS ฉุกเฉินแล้ว!</p>
+                        <p className="text-[10px] text-gray-300">พิกัด GPS 13.7563, 100.5018 ถูกส่งแล้ว</p>
+                        <button onClick={() => setSosActive(false)} className="px-3 py-1 rounded bg-white/20 text-[10px]">ยกเลิก</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs font-bold pt-2 border-t border-rose-500/20">
+                  <a href="tel:191" className="p-2.5 rounded-xl bg-blue-600/30 border border-blue-500 text-blue-300 text-center flex items-center justify-center gap-1">
+                    <i data-lucide="phone" className="w-3.5 h-3.5"></i> โทร 191
+                  </a>
+                  <a href="tel:1669" className="p-2.5 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 text-center flex items-center justify-center gap-1">
+                    <i data-lucide="phone" className="w-3.5 h-3.5"></i> โทร 1669
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Sections: Stocks & News */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Stocks Section */}
+              <div id="stocks-section" className="glass-panel p-5 rounded-2xl space-y-3">
+                <h4 className="font-bold text-sm text-white flex items-center justify-between">
+                  <span className="flex items-center gap-2"><i data-lucide="trending-up" className="w-4 h-4 text-teal-400"></i> ตลาดหุ้น SET Index & Watchlist</span>
+                  <span className="text-[10px] text-teal-400 font-medium">เรียลไทม์</span>
+                </h4>
+                
+                <div className="space-y-2">
+                  {stocks.map((stk, idx) => (
+                    <div key={idx} className="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
+                      <div>
+                        <span className="font-bold text-white">{stk.symbol}</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-white font-semibold">{stk.price} ฿</span>
+                        <span className={`font-bold px-2 py-0.5 rounded ${stk.up ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                          {stk.pct}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* News Section */}
+              <div id="news-section" className="glass-panel p-5 rounded-2xl space-y-3">
+                <h4 className="font-bold text-sm text-white flex items-center justify-between">
+                  <span className="flex items-center gap-2"><i data-lucide="newspaper" className="w-4 h-4 text-blue-400"></i> ข่าวสารบ้านเมืองประจำวัน</span>
+                  <span className="text-[10px] text-blue-400 font-medium">อัปเดตล่าสุด</span>
+                </h4>
+
+                <div className="space-y-2.5">
+                  {newsList.map(n => (
+                    <div key={n.id} className="glass-card p-3 rounded-xl space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">{n.tag}</span>
+                        <span className="text-[10px] text-gray-400">{n.time}</span>
+                      </div>
+                      <p className="text-xs font-semibold text-white">{n.title}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
           </main>
 
-          {/* PWA Multi-Device Install & QR Modal */}
+          {/* Modal 1: Bill QR Code Payment Modal */}
+          {showBillModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+              <div className="glass-panel w-full max-w-sm p-6 rounded-3xl text-center space-y-4 relative border border-emerald-500/40">
+                <button onClick={() => setShowBillModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+
+                <h3 className="font-bold text-base text-white">ชำระบิลค่าไฟฟ้า (MEA e-Service)</h3>
+                <p className="text-xs text-gray-300">ผู้ใช้บริการ: คุณนรเศรษฐ์ (รหัส 020008891234)</p>
+
+                {/* QR Code */}
+                <div className="w-44 h-44 mx-auto bg-white p-3 rounded-2xl flex items-center justify-center shadow-2xl">
+                  <div className="w-full h-full border-4 border-black p-2 flex flex-col justify-between items-center">
+                    <div className="w-full flex justify-between">
+                      <div className="w-7 h-7 bg-black"></div>
+                      <div className="w-7 h-7 bg-black"></div>
+                    </div>
+                    <i data-lucide="qr-code" className="w-16 h-16 text-black"></i>
+                    <div className="w-full flex justify-between">
+                      <div className="w-7 h-7 bg-black"></div>
+                      <div className="w-16 h-3 bg-black"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase">ยอดเงินสุทธิที่ต้องชำระ</p>
+                  <p className="text-2xl font-extrabold text-emerald-400">1,820.00 ฿</p>
+                </div>
+
+                {!billPaid ? (
+                  <button 
+                    onClick={() => { setBillPaid(true); setTimeout(() => setShowBillModal(false), 2000); }}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs shadow-lg hover:brightness-110"
+                  >
+                    จำลองการสแกนชำระสำเร็จ
+                  </button>
+                ) : (
+                  <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-xs font-bold">
+                    ✓ ชำระเงินเรียบร้อยแล้ว ออกใบเสร็จรับเงินสำเร็จ
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Modal 2: AI Quick Assistant Modal */}
+          {showAiModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+              <div className="glass-panel w-full max-w-lg p-6 rounded-3xl space-y-4 relative border border-violet-500/40 flex flex-col max-h-[85vh]">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-violet-600 flex items-center justify-center text-white font-bold">
+                      <i data-lucide="bot" className="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm text-white">ผู้ช่วย AI ปรึกษา (AI Advisor)</h3>
+                      <p className="text-[10px] text-violet-300">บริการให้คำปรึกษาตลอด 24 ชม.</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowAiModal(false)} className="text-gray-400 hover:text-white">✕</button>
+                </div>
+
+                {/* Messages Box */}
+                <div className="flex-1 overflow-y-auto space-y-3 p-2 min-h-[220px]">
+                  {aiMessages.map((msg, i) => (
+                    <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`p-3 rounded-2xl max-w-[85%] text-xs leading-relaxed ${
+                        msg.sender === 'user' 
+                          ? 'bg-violet-600 text-white rounded-br-none' 
+                          : 'bg-white/10 text-gray-200 rounded-bl-none border border-white/10'
+                      }`}>
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Input Bar */}
+                <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                  <input 
+                    type="text" 
+                    value={aiInput} 
+                    onChange={e => setAiInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSendAiMessage()}
+                    placeholder="พิมพ์คำถามที่ต้องการปรึกษา..." 
+                    className="flex-1 bg-slate-900 border border-white/10 p-2.5 rounded-xl text-xs text-white outline-none focus:border-violet-500"
+                  />
+                  <button 
+                    onClick={handleSendAiMessage}
+                    className="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shrink-0"
+                  >
+                    ส่ง
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal 3: PWA Multi-Device Install & Network URL Modal */}
           {showInstallModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
               <div className="glass-panel w-full max-w-md p-6 rounded-3xl space-y-4 relative border border-emerald-500/40 text-center">
@@ -384,7 +776,7 @@
                     </button>
                   </div>
                   <p className="text-[10px] text-gray-400 mt-1">
-                    *เพียงเชื่อมต่อ Wi-Fi เดียวกัน หรือพิมพ์ URL นี้ในมือถือเครื่องใดก็ได้
+                    *เพียงพิมพ์ URL นี้ในเบราว์เซอร์บนมือถือหรืออุปกรณ์เครื่องใดก็ได้
                   </p>
                 </div>
 
@@ -404,9 +796,9 @@
           {/* Footer */}
           <footer className="mt-16 border-t border-white/10 glass-panel py-6 px-4 text-center text-xs text-gray-400">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p>© 2026 One Stop Service - PWA Progressive Web App 9-in-1</p>
+              <p>© 2026 One Stop Service — Super App 9-in-1 (Progressive Web App)</p>
               <div className="flex items-center gap-3">
-                <span className="text-emerald-400 font-semibold">● PWA Ready (รองรับทุกอุปกรณ์)</span>
+                <span className="text-emerald-400 font-semibold">● PWA Active (เปิดใช้งานได้ทุกอุปกรณ์)</span>
               </div>
             </div>
           </footer>
@@ -415,600 +807,6 @@
       );
     }
 
-    /* Sub-Views */
-    function DashboardView({ setActiveTab, smartDevices, toggleDevice, triggerSos, handleInstallPWA, localNetworkUrl }) {
-      return (
-        <div className="space-y-6">
-          <div className="glass-panel p-8 rounded-3xl bg-gradient-to-r from-emerald-950/80 via-teal-950/60 to-slate-900 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
-                <i data-lucide="sparkles" className="w-3.5 h-3.5"></i> ยินดีต้อนรับ คุณนรเศรษฐ์ (PWA Active)
-              </span>
-              <h2 className="text-2xl lg:text-3xl font-extrabold text-white">
-                One Stop Service <span className="text-gradient-purple">เปิดใช้งานได้ทุกอุปกรณ์ (9-in-1)</span>
-              </h2>
-              <p className="text-xs text-gray-300 mt-1 max-w-xl">
-                รองรับการติดตั้งเป็นแอปบนมือถือ iOS / Android และเปิดใช้งานได้ทุกอุปกรณ์ผ่าน Wi-Fi เดียวกันที่ <b className="text-emerald-300">{localNetworkUrl}</b>
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button onClick={handleInstallPWA} className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs shadow-lg flex items-center gap-2">
-                <i data-lucide="smartphone" className="w-4 h-4"></i> ติดตั้งลงมือถือ / เปิดทุกอุปกรณ์
-              </button>
-            </div>
-          </div>
-
-          {/* Quick News & Stock Banner */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div onClick={() => setActiveTab('news')} className="glass-panel p-3.5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-blue-500">
-              <span className="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-400 font-bold text-xs">ข่าวด่วน</span>
-              <p className="text-xs text-gray-200 truncate flex-1 px-3">แบงก์ชาติปรับประมาณการเศรษฐกิจไทยปี 2026 เติบโตแกร่งขึ้น</p>
-              <i data-lucide="arrow-right" className="w-4 h-4 text-gray-400"></i>
-            </div>
-
-            <div onClick={() => setActiveTab('stocks')} className="glass-panel p-3.5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-500">
-              <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold text-xs">SET Index</span>
-              <p className="text-xs text-white font-bold flex-1 px-3">1,385.42 <span className="text-emerald-400 font-medium pl-2">+12.30 (+0.90%)</span></p>
-              <i data-lucide="arrow-right" className="w-4 h-4 text-gray-400"></i>
-            </div>
-          </div>
-
-          {/* 9 Grid Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
-            {[
-              { id: 'ride', title: 'เรียกรถรับ-ส่ง (GrabCar)', desc: 'ฝังพอร์ทัล Grab Transport ในแอป', icon: 'car', color: 'text-cyan-400', border: 'hover:border-cyan-500' },
-              { id: 'food', title: 'สั่งซื้ออาหาร (GrabFood)', desc: 'ฝังพอร์ทัล GrabFood สั่งอาหารในแอป', icon: 'utensils-crossed', color: 'text-orange-400', border: 'hover:border-orange-500' },
-              { id: 'mall', title: 'สั่งสินค้าออนไลน์ (Shopee)', desc: 'ฝังพอร์ทัล Shopee ช้อปปิ้งออนไลน์ในแอป', icon: 'shopping-bag', color: 'text-purple-400', border: 'hover:border-purple-500' },
-              { id: 'bill', title: 'จ่ายค่าไฟ/น้ำ (MEA & PEA)', desc: 'ฝังพอร์ทัล e-Service จ่ายบิลค่าไฟตรง', icon: 'credit-card', color: 'text-emerald-400', border: 'hover:border-emerald-500' },
-              { id: 'sos', title: 'แจ้งเหตุด่วน SOS', desc: 'ปุ่มฉุกเฉิน โทร 191/1669', icon: 'alert-triangle', color: 'text-rose-500', border: 'border-rose-500/40 bg-rose-950/20' },
-              { id: 'home', title: 'สั่งเปิด-ปิดบ้าน', desc: 'ควบคุมสวิตช์ไฟ & แอร์ IoT', icon: 'home', color: 'text-pink-400', border: 'hover:border-pink-500' },
-              { id: 'ai', title: 'ผู้ช่วย AI ปรึกษา', desc: 'ไขข้อสงสัยบ้าน อาหาร สุขภาพ', icon: 'bot', color: 'text-violet-400', border: 'hover:border-violet-500' },
-              { id: 'stocks', title: 'ตลาดหุ้น SET', desc: 'ดูราคาหุ้น กราฟ Watchlist', icon: 'trending-up', color: 'text-teal-400', border: 'hover:border-teal-500' },
-              { id: 'news', title: 'ข่าวสารบ้านเมือง', icon: 'newspaper', desc: 'อัปเดตข่าวเศรษฐกิจ การเมือง', color: 'text-blue-400', border: 'hover:border-blue-500' },
-            ].map(card => (
-              <div 
-                key={card.id} 
-                onClick={() => setActiveTab(card.id)}
-                className={`glass-panel p-5 rounded-2xl cursor-pointer hover:scale-[1.02] transition border ${card.border}`}
-              >
-                <div className={`w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-3 ${card.color}`}>
-                  <i data-lucide={card.icon} className="w-6 h-6"></i>
-                </div>
-                <h4 className="font-bold text-sm text-white">{card.title}</h4>
-                <p className="text-xs text-gray-400 mt-1">{card.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Widgets Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass-panel p-5 rounded-2xl space-y-3">
-              <h4 className="font-bold text-sm text-white flex items-center gap-2">
-                <i data-lucide="home" className="w-4 h-4 text-pink-400"></i> ทางด่วน Smart Home
-              </h4>
-              {smartDevices.slice(0, 3).map(dev => (
-                <div key={dev.id} className="glass-card p-3 rounded-xl flex items-center justify-between">
-                  <span className="text-xs text-white font-medium">{dev.name}</span>
-                  <button 
-                    onClick={() => toggleDevice(dev.id)}
-                    className={`w-10 h-6 rounded-full p-0.5 flex items-center ${dev.on ? 'bg-pink-500 justify-end' : 'bg-gray-700 justify-start'}`}
-                  >
-                    <span className="w-5 h-5 rounded-full bg-white"></span>
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <div className="glass-panel p-5 rounded-2xl space-y-3">
-              <h4 className="font-bold text-sm text-white flex items-center gap-2">
-                <i data-lucide="credit-card" className="w-4 h-4 text-emerald-400"></i> บิลรอชำระเดือนนี้
-              </h4>
-              <div className="glass-card p-3 rounded-xl flex justify-between text-xs">
-                <span>ค่าน้ำประปา (MWA)</span>
-                <span className="font-bold text-amber-400">340.00 ฿</span>
-              </div>
-              <div className="glass-card p-3 rounded-xl flex justify-between text-xs">
-                <span>ค่าไฟฟ้า (MEA)</span>
-                <span className="font-bold text-emerald-400">1,820.00 ฿</span>
-              </div>
-            </div>
-
-            <div className="glass-panel p-5 rounded-2xl border-rose-500/40 bg-rose-950/20 flex flex-col justify-between">
-              <div>
-                <h4 className="font-bold text-sm text-rose-400 flex items-center gap-2">
-                  <i data-lucide="alert-triangle" className="w-4 h-4"></i> ความปลอดภัย SOS
-                </h4>
-                <p className="text-xs text-gray-300 mt-1">กดแจ้งเหตุฉุกเฉินถึง 191 และผู้ติดต่อทันที</p>
-              </div>
-              <button onClick={triggerSos} className="mt-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs pulse-sos">
-                ส่งสัญญาณแจ้งเหตุฉุกเฉินด่วน
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function RideView({ activeRide, setActiveRide }) {
-      const [status, setStatus] = useState('idle');
-      const [pickup, setPickup] = useState('คอนโด แอสปาย พระราม 9');
-      const [dest, setDest] = useState('เซ็นทรัลเวิลด์ ราชประสงค์');
-      const [rideType, setRideType] = useState('car');
-      const [viewMode, setViewMode] = useState('app');
-
-      const handleBook = () => {
-        setStatus('searching');
-        setTimeout(() => {
-          setStatus('assigned');
-          setActiveRide(true);
-        }, 2000);
-      };
-
-      return (
-        <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-cyan-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold mb-2">
-                <i data-lucide="car" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลบริการในแอป (In-App Grab Transport)
-              </span>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                บริการเรียกรถเดินทาง (Grab Transport / GrabCar)
-              </h2>
-              <p className="text-xs text-gray-300 mt-1">เรียกรถด่วน มอเตอร์ไซค์ แท็กซี่ รถ VIP พร้อมติดตามเส้นทาง GPS แบบเรียลไทม์</p>
-            </div>
-
-            <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-              <button 
-                onClick={() => setViewMode('app')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${viewMode === 'app' ? 'bg-cyan-500 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                เรียกรถด่วน
-              </button>
-              <button 
-                onClick={() => setViewMode('embed')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-cyan-500 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                <i data-lucide="globe" className="w-3.5 h-3.5"></i> พอร์ทัลเว็บ Grab
-              </button>
-            </div>
-          </div>
-
-          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span className="text-gray-400">https://www.grab.com/th/transport/</span>
-            </div>
-            <a 
-              href="https://www.grab.com/th/transport/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
-            >
-              <span>เปิดเต็มจอ</span>
-              <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-
-          {viewMode === 'embed' ? (
-            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-cyan-500/30">
-              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
-                <iframe 
-                  src="https://www.grab.com/th/transport/" 
-                  className="w-full h-full border-0"
-                  title="Grab Transport Portal"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-5 glass-panel p-5 rounded-2xl space-y-4">
-                <h3 className="font-bold text-sm text-white">ระบุเส้นทางเดินทาง</h3>
-                <input type="text" value={pickup} onChange={e => setPickup(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดรับ..." />
-                <input type="text" value={dest} onChange={e => setDest(e.target.value)} className="w-full bg-slate-800 border border-white/10 p-3 rounded-xl text-xs text-white" placeholder="จุดส่ง..." />
-
-                <h3 className="font-bold text-sm text-white pt-2">ประเภทรถ Grab</h3>
-                <div className="space-y-2">
-                  {[
-                    { id: 'bike', name: 'GrabBike (Win)', desc: 'รวดเร็ว คล่องตัว', price: '45 ฿' },
-                    { id: 'car', name: 'GrabCar (Standard)', desc: 'แอร์เย็น นั่งสบาย 4 ที่นั่ง', price: '125 ฿' },
-                    { id: 'suv', name: 'GrabCar Premium / SUV', desc: 'หรูหรา กว้างขวาง 6 ที่นั่ง', price: '240 ฿' },
-                  ].map(v => (
-                    <div 
-                      key={v.id}
-                      onClick={() => setRideType(v.id)}
-                      className={`glass-card p-3 rounded-xl flex justify-between cursor-pointer border ${rideType === v.id ? 'border-cyan-500 bg-cyan-950/30' : 'border-white/10'}`}
-                    >
-                      <div>
-                        <p className="text-xs font-bold text-white">{v.name}</p>
-                        <p className="text-[10px] text-gray-400">{v.desc}</p>
-                      </div>
-                      <span className="font-extrabold text-cyan-400 text-sm">{v.price}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {status === 'idle' && (
-                  <button onClick={handleBook} className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg hover:brightness-110">
-                    ยืนยันเรียกรถผ่าน Grab ทันที
-                  </button>
-                )}
-                {status === 'assigned' && (
-                  <button onClick={() => { setStatus('idle'); setActiveRide(false); }} className="w-full py-3 rounded-xl bg-gray-700 text-white font-bold text-xs">
-                    ยกเลิกการเดินทาง
-                  </button>
-                )}
-              </div>
-
-              <div className="lg:col-span-7 glass-panel p-4 h-[420px] rounded-2xl relative overflow-hidden bg-slate-950 flex flex-col justify-between border border-cyan-500/20">
-                <div className="flex justify-between items-center bg-black/70 p-3 rounded-xl text-xs z-10">
-                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> 📍 แผนที่ GPS ดาวเทียมสด (Grab Map)</span>
-                  <span className="text-cyan-400 font-bold">ระยะทาง 5.8 กม. (~14 นาที)</span>
-                </div>
-
-                {status === 'searching' && (
-                  <div className="m-auto text-center p-6 glass-panel rounded-2xl border border-cyan-500/40 animate-pulse">
-                    <p className="font-bold text-sm text-cyan-300">กำลังส่งสัญญาณค้นหาคนขับ Grab ใกล้คุณ...</p>
-                    <p className="text-xs text-gray-400 mt-1">รัศมี 2.5 กิโลเมตร</p>
-                  </div>
-                )}
-
-                {status === 'assigned' && (
-                  <div className="m-auto text-center p-5 glass-panel rounded-2xl border-2 border-emerald-500 shadow-2xl bg-emerald-950/40">
-                    <p className="font-bold text-sm text-emerald-300">✓ พบนายช่างคนขับ Grab แล้ว: คุณวิชัย สุขเกษม</p>
-                    <p className="text-xs text-white font-semibold mt-1">Toyota Camry สีดำ (ทะเบียน 1กข 8892 BKK)</p>
-                    <p className="text-xs text-emerald-400 mt-1">กำลังเดินทางมารับคุณใน 4 นาที</p>
-                  </div>
-                )}
-
-                <div className="flex justify-between text-[11px] text-gray-300 bg-black/70 p-3 rounded-xl z-10">
-                  <span>จุดรับ: {pickup}</span>
-                  <span>จุดส่ง: {dest}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    function FoodView({ cart, addToCart, removeFromCart, clearCart }) {
-      const [viewMode, setViewMode] = useState('app');
-      const restaurants = [
-        { id: 101, name: 'ข้าวมันไก่ต้มหนังนุ่ม + น้ำซุปฟัก', price: 65, resto: 'ข้าวมันไก่เฮียเม้ง', rating: 4.9, time: '15-25 นาที' },
-        { id: 201, name: 'ทงคตสึราเมน ซุปกระดูกหมูเข้มข้น', price: 180, resto: 'Ramen Ichiban', rating: 4.8, time: '20-30 นาที' },
-        { id: 301, name: 'ส้มตำปูปลาร้าเครื่องแน่น', price: 60, resto: 'ส้มตำแซ่บเวอร์', rating: 4.9, time: '10-20 นาที' },
-        { id: 401, name: 'Uji Matcha Latte เย็น', price: 120, resto: 'Cozy Matcha Cafe', rating: 4.95, time: '10-15 นาที' }
-      ];
-
-      return (
-        <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-orange-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-xs font-semibold mb-2">
-                <i data-lucide="utensils-crossed" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลบริการในแอป (In-App GrabFood)
-              </span>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                สั่งซื้ออาหารดิลิเวอรี (GrabFood)
-              </h2>
-              <p className="text-xs text-gray-300 mt-1">เลือกร้านเด็ดรอบตัว สั่งอาหารส่งร้อนถึงบ้านคุณได้อย่างรวดเร็วใน 20 นาที</p>
-            </div>
-
-            <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-              <button 
-                onClick={() => setViewMode('app')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${viewMode === 'app' ? 'bg-orange-500 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                เมนูแนะนำ
-              </button>
-              <button 
-                onClick={() => setViewMode('embed')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-orange-500 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                <i data-lucide="globe" className="w-3.5 h-3.5"></i> พอร์ทัลเว็บ GrabFood
-              </button>
-            </div>
-          </div>
-
-          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
-              <span className="w-2 h-2 rounded-full bg-orange-400"></span>
-              <span className="text-gray-400">https://www.grab.com/th/food/</span>
-            </div>
-            <a 
-              href="https://www.grab.com/th/food/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="px-3.5 py-2 rounded-xl bg-orange-600/30 hover:bg-orange-600/50 text-orange-300 border border-orange-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
-            >
-              <span>เปิดเต็มจอ</span>
-              <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-
-          {viewMode === 'embed' ? (
-            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-orange-500/30">
-              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
-                <iframe 
-                  src="https://www.grab.com/th/food/" 
-                  className="w-full h-full border-0"
-                  title="GrabFood Portal"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {restaurants.map(item => (
-                  <div key={item.id} className="glass-panel p-4 rounded-2xl space-y-2 border border-white/10 hover:border-orange-500/50 transition">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 font-bold">{item.resto}</span>
-                      <span className="text-[10px] text-gray-400">⭐ {item.rating} ({item.time})</span>
-                    </div>
-                    <h4 className="font-bold text-sm text-white">{item.name}</h4>
-                    <div className="flex items-center justify-between pt-2">
-                      <span className="font-extrabold text-orange-400 text-sm">{item.price} ฿</span>
-                      <button onClick={() => addToCart(item)} className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs">
-                        + เพิ่มลงตะกร้า
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="lg:col-span-4 glass-panel p-5 rounded-2xl space-y-4 border border-orange-500/20">
-                <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                  <i data-lucide="shopping-bag" className="w-4 h-4 text-orange-400"></i> ตะกร้า GrabFood ของคุณ
-                </h3>
-                {cart.map(i => (
-                  <div key={i.id} className="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
-                    <div>
-                      <p className="font-bold text-white">{i.name}</p>
-                      <p className="text-orange-400">{i.price} ฿</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => removeFromCart(i.id)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
-                      <span className="font-bold text-white">{i.quantity}</span>
-                      <button onClick={() => addToCart(i)} className="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
-                    </div>
-                  </div>
-                ))}
-                {cart.length > 0 ? (
-                  <button onClick={() => { alert('สั่งซื้อผ่าน GrabFood สำเร็จ! ไรเดอร์กำลังจัดส่งอาหาร'); clearCart(); }} className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs shadow-lg">
-                    ชำระเงินสั่งซื้อ GrabFood ทันที
-                  </button>
-                ) : (
-                  <p className="text-xs text-gray-400 text-center py-4">ไม่มีสินค้าในตะกร้า</p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    function MallView({ addToCart }) {
-      const [viewMode, setViewMode] = useState('app');
-      const items = [
-        { id: 501, name: 'Samsung Neo QLED 4K Smart TV 65 นิ้ว', price: 28990, desc: 'ผ่อน 0% 10 เดือน' },
-        { id: 502, name: 'LG InstaView ตู้เย็น 4 ประตู (21.7 คิว)', price: 45900, desc: 'เคาะ 2 ครั้งมองเห็นข้างใน' },
-        { id: 503, name: 'Daikin Inverter Smart Aircon 18,000 BTU', price: 24500, desc: 'ฟรีติดตั้งทั่วประเทศ' },
-        { id: 504, name: 'Roborock S8 Pro Ultra หุ่นยนต์ดูดฝุ่น', price: 32900, desc: 'ซักผ้าถูอัตโนมัติ' },
-      ];
-
-      return (
-        <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-purple-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold mb-2">
-                <i data-lucide="shopping-bag" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลบริการในแอป (In-App Shopee Shopping)
-              </span>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                สั่งสินค้าออนไลน์ (Shopee)
-              </h2>
-              <p className="text-xs text-gray-300 mt-1">เลือกซื้อสินค้าออนไลน์ เครื่องใช้ไฟฟ้า แฟชั่น อุปกรณ์ IT สินค้าครบครันบน Shopee</p>
-            </div>
-
-            <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-              <button 
-                onClick={() => setViewMode('app')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${viewMode === 'app' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                สินค้าแนะนำ
-              </button>
-              <button 
-                onClick={() => setViewMode('embed')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${viewMode === 'embed' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                <i data-lucide="globe" className="w-3.5 h-3.5"></i> พอร์ทัลเว็บ Shopee
-              </button>
-            </div>
-          </div>
-
-          <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
-              <span className="w-2 h-2 rounded-full bg-purple-400"></span>
-              <span className="text-gray-400">https://shopee.co.th/</span>
-            </div>
-            <a 
-              href="https://shopee.co.th/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
-            >
-              <span>เปิดเต็มจอ</span>
-              <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-
-          {viewMode === 'embed' ? (
-            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-purple-500/30">
-              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
-                <iframe 
-                  src="https://shopee.co.th/" 
-                  className="w-full h-full border-0"
-                  title="Shopee Portal"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {items.map(prod => (
-                <div key={prod.id} className="glass-panel p-5 rounded-2xl flex flex-col justify-between space-y-3 border border-white/10 hover:border-purple-500/50 transition">
-                  <div>
-                    <h4 className="font-bold text-sm text-white">{prod.name}</h4>
-                    <p className="text-[11px] text-purple-400 mt-1">{prod.desc}</p>
-                  </div>
-                  <div>
-                    <p className="font-extrabold text-white text-base mb-2">{prod.price.toLocaleString()} ฿</p>
-                    <button onClick={() => { addToCart(prod); alert('หยอดสินค้าใส่ตะกร้า Shopee เรียบร้อยแล้ว!'); }} className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs">
-                      สั่งซื้อทันที
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    function BillView() {
-      const [portal, setPortal] = useState('mea');
-      const [paid, setPaid] = useState(false);
-
-      const portalUrls = {
-        mea: { name: 'การไฟฟ้านครหลวง (MEA e-Service)', url: 'https://eservice.mea.or.th/' },
-        pea: { name: 'การไฟฟ้าส่วนภูมิภาค (PEA e-Service)', url: 'https://eservice.pea.co.th/' },
-        mwa: { name: 'การประปานครหลวง (MWA e-Service)', url: 'https://eservice.mwa.co.th/' },
-      };
-
-      return (
-        <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
-                <i data-lucide="credit-card" className="w-3.5 h-3.5"></i> ฝังพอร์ทัลจ่ายค่าไฟ & ค่าน้ำในแอป
-              </span>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                ศูนย์ชำระบิลค่าไฟฟ้า & ค่าน้ำประปา (MEA / PEA / MWA)
-              </h2>
-              <p className="text-xs text-gray-300 mt-1">ชำระค่าไฟตรงกับการไฟฟ้า หรือสแกน QR PromptPay ฟรีค่าธรรมเนียม</p>
-            </div>
-
-            <div className="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10 overflow-x-auto max-w-full">
-              {[
-                { id: 'mea', label: 'การไฟฟ้า MEA' },
-                { id: 'pea', label: 'การไฟฟ้า PEA' },
-                { id: 'mwa', label: 'การประปา MWA' },
-                { id: 'qr', label: 'QR PromptPay' },
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setPortal(item.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                    portal === item.id ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {portal !== 'qr' && (
-            <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2 flex-1 bg-slate-950/80 px-3 py-2 rounded-xl border border-white/10 text-gray-300 font-mono text-[11px] truncate">
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span className="text-gray-400">{portalUrls[portal]?.url}</span>
-              </div>
-              <a 
-                href={portalUrls[portal]?.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="px-3.5 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 shrink-0"
-              >
-                <span>เปิดพอร์ทัลเต็มจอ</span>
-                <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
-              </a>
-            </div>
-          )}
-
-          {portal !== 'qr' ? (
-            <div className="glass-panel p-4 rounded-3xl overflow-hidden border-emerald-500/30">
-              <div className="w-full h-[600px] rounded-2xl overflow-hidden bg-slate-950 relative border border-white/10">
-                <iframe 
-                  src={portalUrls[portal]?.url} 
-                  className="w-full h-full border-0"
-                  title={portalUrls[portal]?.name}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="glass-panel p-6 rounded-2xl max-w-lg mx-auto space-y-4 border-emerald-500/30">
-              <h3 className="font-bold text-sm text-white">บิลค่าไฟฟ้าประจำเดือน กรกฎาคม 2026</h3>
-              <div className="space-y-2 text-xs text-gray-300 border-t border-white/10 pt-3">
-                <div className="flex justify-between"><span>ผู้ใช้บริการ:</span><span className="text-white font-bold">คุณนรเศรษฐ์</span></div>
-                <div className="flex justify-between"><span>การไฟฟ้า:</span><span>การไฟฟ้านครหลวง (MEA)</span></div>
-                <div className="flex justify-between"><span>ปริมาณไฟฟ้า:</span><span>412 หน่วย (kWh)</span></div>
-                <div className="flex justify-between border-t border-white/10 pt-2 font-bold text-sm text-emerald-400"><span>ยอดเงินสุทธิ:</span><span>1,820.00 ฿</span></div>
-              </div>
-
-              {!paid ? (
-                <button onClick={() => setPaid(true)} className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white font-bold text-xs shadow-lg">
-                  สแกน QR PromptPay ชำระเงินค่าไฟ (1,820.00 ฿)
-                </button>
-              ) : (
-                <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-center font-bold text-xs">
-                  ✓ ชำระเงินค่าไฟฟ้าเรียบร้อยแล้ว ออกใบเสร็จรับเงินสำเร็จ
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    function SosView({ sosAlertActive, triggerSos, cancelSos }) {
-      return (
-        <div className="space-y-6 text-center">
-          <div className="glass-panel p-8 rounded-3xl border-rose-500/40 bg-rose-950/20 max-w-xl mx-auto space-y-6">
-            <h2 className="text-2xl font-extrabold text-rose-400">🚨 ศูนย์แจ้งเหตุฉุกเฉิน SOS</h2>
-            <p className="text-xs text-gray-300">กดปุ่มเพื่อส่งพิกัด GPS ไปยัง 191 และผู้ติดต่อฉุกเฉิน</p>
-
-            {!sosAlertActive ? (
-              <button onClick={triggerSos} className="w-40 h-40 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xl shadow-2xl mx-auto flex items-center justify-center pulse-sos">
-                กดส่ง SOS
-              </button>
-            ) : (
-              <div className="p-4 rounded-2xl bg-rose-600/30 border border-rose-400 text-white space-y-3">
-                <p className="font-bold">✓ ส่งสัญญาณ SOS ฉุกเฉินเรียบร้อยแล้ว!</p>
-                <p className="text-xs">พิกัด GPS 13.7563, 100.5018 ถูกส่งไปยังศูนย์ 191 แล้ว</p>
-                <button onClick={cancelSos} className="px-4 py-2 rounded-lg bg-white/10 text-xs">ยกเลิกสัญญาณ</button>
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3 text-xs font-bold pt-4">
-              <a href="tel:191" className="p-3 rounded-xl bg-blue-600/30 border border-blue-500 text-blue-300">โทร 191 (ตำรวจ)</a>
-              <a href="tel:1669" className="p-3 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300">โทร 1669 (รถพยาบาล)</a>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function HomeView({ devices, toggleDevice }) {
-      return (
-        <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl border-pink-500/30">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="home" className="w-5 h-5 text-pink-400"></i> ควบคุมบ้านอัจฉริยะ (One Stop IoT)
-            </h2>
-            <p className="text-xs text-gray-300 mt-1">สั่งเปิด-ปิดไฟ แอร์ และอุปกรณ์ภายในบ้าน</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {devices.map(dev => (
               <div key={dev.id} className={`glass-panel p-5 rounded-2xl flex items-center justify-between border ${dev.on ? 'border-pink-500 bg-pink-950/20' : 'border-white/10'}`}>
                 <div>
                   <h4 className="font-bold text-sm text-white">{dev.name}</h4>
