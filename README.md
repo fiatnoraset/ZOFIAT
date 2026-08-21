@@ -1,5 +1,6 @@
 # 🌟 One Stop Service — Super App 9-in-1 (PWA)
 
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Active-success?style=for-the-badge&logo=github&logoColor=white)](https://fiatnoraset.github.io/ZOFIAT/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-10b981?style=for-the-badge&logo=pwa&logoColor=white)](https://fiatnoraset.github.io/ZOFIAT/)
 [![React](https://img.shields.io/badge/React-18.0-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38bdf8?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
@@ -9,13 +10,14 @@
 
 ---
 
-## 🌐 ลิงก์เข้าใช้งานแอปพลิเคชัน (Live Web App)
+## 🌐 ลิงก์เข้าใช้งานแอปพลิเคชัน (Live Web App — อัปเดตเวอร์ชันล่าสุดเสมอ)
 
 👉 **เปิดใช้งานแอปได้ทันทีที่นี่:** **[https://fiatnoraset.github.io/ZOFIAT/](https://fiatnoraset.github.io/ZOFIAT/)**
 
-| ช่องทาง | ลิงก์ | รายละเอียด |
+| ช่องทาง | ลิงก์ | สถานะ / รายละเอียด |
 |---|---|---|
-| 🌐 **Live Web App (พร้อมใช้งาน)** | **[https://fiatnoraset.github.io/ZOFIAT/](https://fiatnoraset.github.io/ZOFIAT/)** | เปิดใช้งานได้ทันทีทั่วโลก ทุกอุปกรณ์ |
+| 🌐 **Live Web App (เวอร์ชันล่าสุด)** | **[https://fiatnoraset.github.io/ZOFIAT/](https://fiatnoraset.github.io/ZOFIAT/)** | 🟢 ออนไลน์พร้อมใช้งาน ทุกอุปกรณ์ทั่วโลก |
+| ⚡ **GitHub Actions / Pages Status** | **[ดูประวัติการ Deploy อัตโนมัติ](https://github.com/fiatnoraset/ZOFIAT/actions)** | 🟢 Built & Deployed ผ่าน GitHub Actions สำเร็จ |
 | 💻 **Local Server** | **[http://localhost:3000](http://localhost:3000)** | เซิร์ฟเวอร์ทดสอบในเครื่อง |
 | 📦 **GitHub Repository** | **[https://github.com/fiatnoraset/ZOFIAT](https://github.com/fiatnoraset/ZOFIAT)** | ซอร์สโค้ดของโครงการ |
 
@@ -62,7 +64,7 @@ ZOFIAT/
 ├── README.md             # เอกสารคู่มือและการใช้งาน
 └── src/                  # ซอร์สโค้ด React & Tailwind Components
     ├── components/       # Header, Navigation
-    └── modules/          # 9 Modules (Ride, Food, Mall, Bill, SOS, Home, AI, Stocks, News)
+    └── modules/          # Dashboard, SmartHome, BillPayment, etc.
 ```
 
 ---
